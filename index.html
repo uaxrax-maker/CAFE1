@@ -6,14 +6,13 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="RPM STORE">
-  <title>RPM STORE | متجر ار بي ام - نظام المخزون والفواتير</title>
+  <title>RPM STORE | متجر ار بي ام</title>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <style>
     :root {
       --orange-main: #d96b27;
       --orange-dark: #b85418;
-      --orange-light: #fbe5d6;
       --green-header: #9bbb59;
       --dark-header: #1d261a;
       --bg-body: #f1f5f9;
@@ -35,7 +34,6 @@
       padding-bottom: 75px;
     }
 
-    /* شريط علوي */
     .top-bar {
       background: #111827;
       color: #fff;
@@ -55,14 +53,14 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      font-size: 1.2rem;
+      font-size: 1.15rem;
       font-weight: 800;
       color: #f59e0b;
     }
 
     .top-stats {
       display: flex;
-      gap: 12px;
+      gap: 10px;
       flex-wrap: wrap;
       font-size: 0.85rem;
     }
@@ -85,7 +83,6 @@
       padding: 0 12px;
     }
 
-    /* التبويبات السفلية بنمط أوراق الإكسل */
     .excel-tabs {
       position: fixed;
       bottom: 0;
@@ -133,7 +130,6 @@
       display: block;
     }
 
-    /* أزرار التحكم */
     .toolbar {
       display: flex;
       gap: 8px;
@@ -164,7 +160,6 @@
     .btn-dark { background: #334155; color: #fff; }
     .btn-red { background: #dc2626; color: #fff; padding: 4px 9px; font-size: 0.78rem; }
 
-    /* تصميم الفاتورة البرتقالية المطابق للإكسل */
     #invoice-printable {
       max-width: 820px;
       margin: 0 auto;
@@ -237,7 +232,6 @@
       padding: 7px 8px;
     }
 
-    /* ترويسات الجداول حسب كل صفحة */
     .inv-table th {
       background: var(--orange-main);
       color: #111;
@@ -280,7 +274,6 @@
       border-radius: 4px;
     }
 
-    /* صفحة المخزن */
     .stock-banner {
       background: linear-gradient(180deg, #b5d56a 0%, #9bbb59 100%);
       color: #111;
@@ -304,7 +297,6 @@
       font-weight: 800;
     }
 
-    /* صفحة الصادر والوارد */
     .dark-banner {
       background: var(--dark-header);
       color: #fff;
@@ -321,7 +313,6 @@
       font-weight: 800;
     }
 
-    /* فورم الإضافة السريعة */
     .quick-form {
       background: #f8fafc;
       border: 1px solid #cbd5e1;
@@ -350,7 +341,6 @@
       font-size: 0.85rem;
     }
 
-    /* إعدادات الطباعة والـ PDF لمنع أي تعليق */
     @media print {
       body {
         background: #fff !important;
@@ -384,7 +374,6 @@
 </head>
 <body>
 
-  <!-- الشريط العلوي -->
   <div class="top-bar no-print">
     <div class="brand-title">
       <span>🚗 RPM STORE | متجر ار بي ام</span>
@@ -398,18 +387,18 @@
 
   <div class="container">
 
-    <!-- ==================== 1. صفحة الفاتورة ==================== -->
+    <!-- 1. صفحة الفاتورة -->
     <section id="sheet-invoice" class="sheet-section active">
       <div class="toolbar no-print">
         <div style="display:flex; gap:8px; flex-wrap:wrap;">
-          <button class="btn btn-orange" onclick="addInvoiceRow()">➕ إضافة سطر للفاتورة</button>
+          <button class="btn btn-orange" onclick="addInvoiceRow()">➕ إضافة سطر</button>
           <button class="btn btn-green" onclick="postInvoiceToSales()">✅ اعتماد وترحيل للصادر والمخزن</button>
           <button class="btn btn-dark" onclick="clearInvoice()">🔄 فاتورة جديدة</button>
         </div>
         <div style="display:flex; gap:8px; flex-wrap:wrap;">
           <button class="btn btn-blue" onclick="exportInvoicePDF()">📄 تحميل PDF</button>
-          <button class="btn btn-dark" onclick="window.print()">🖨️ طباعة / حفظ PDF فوري</button>
-          <button class="btn btn-green" onclick="shareInvoiceWhatsApp()">💬 إرسال واتساب</button>
+          <button class="btn btn-dark" onclick="window.print()">🖨️ طباعة فورية</button>
+          <button class="btn btn-green" onclick="shareInvoiceWhatsApp()">💬 واتساب</button>
         </div>
       </div>
 
@@ -434,8 +423,8 @@
               <td><input type="text" id="inv-date" class="meta-input"></td>
             </tr>
             <tr>
-              <td class="meta-label">طريقة الدفع / الهاتف</td>
-              <td><input type="text" id="inv-phone" class="meta-input" placeholder="تحويل / كاش - 9xxxxxxx"></td>
+              <td class="meta-label">طريقة الدفع</td>
+              <td><input type="text" id="inv-phone" class="meta-input" placeholder="تحويل / كاش - رقم الهاتف"></td>
             </tr>
           </table>
         </div>
@@ -480,7 +469,7 @@
       </div>
     </section>
 
-    <!-- ==================== 2. صفحة المخزن ==================== -->
+    <!-- 2. صفحة المخزن -->
     <section id="sheet-stock" class="sheet-section">
       <div class="toolbar no-print">
         <input type="text" id="stock-search" class="form-control" style="max-width:280px;" placeholder="🔍 بحث بالكود أو اسم الصنف..." oninput="renderStock()">
@@ -490,7 +479,6 @@
         </div>
       </div>
 
-      <!-- إضافة أو تحديث صنف في المخزن -->
       <div class="quick-form no-print">
         <div class="form-group">
           <label>الكود (مثال A45)</label>
@@ -539,7 +527,7 @@
       </div>
     </section>
 
-    <!-- ==================== 3. صفحة الصادر | البيع ==================== -->
+    <!-- 3. صفحة الصادر | البيع -->
     <section id="sheet-sales" class="sheet-section">
       <div class="quick-form no-print">
         <div class="form-group">
@@ -587,7 +575,7 @@
       </div>
     </section>
 
-    <!-- ==================== 4. صفحة الشراء / الوارد ==================== -->
+    <!-- 4. صفحة الشراء / الوارد -->
     <section id="sheet-purchases" class="sheet-section">
       <div class="quick-form no-print">
         <div class="form-group">
@@ -638,7 +626,7 @@
 
   </div>
 
-  <!-- شريط التبويبات السفلي المطابق لشريط أوراق الإكسل -->
+  <!-- شريط التنقل السفلي -->
   <div class="excel-tabs no-print">
     <button class="tab-btn" onclick="switchSheet('purchases', this)">الوارد</button>
     <button class="tab-btn" onclick="switchSheet('sales', this)">الصادر</button>
@@ -647,9 +635,8 @@
   </div>
 
   <script>
-    const STORAGE_KEY = 'RPM_STORE_EXCEL_SYSTEM_V2';
+    const STORAGE_KEY = 'RPM_STORE_EXCEL_FINAL_V1';
 
-    // البيانات الافتراضية المستخرجة من شاشات إكسل متجر ار بي ام
     const DEFAULT_DATA = {
       products: [
         { code: 'A01', name: 'وسادة هوائية لفتح باب السيارة', unit: 'حبة', openQty: 5, baseIn: 0, baseOut: 5, sell: 6.00, buy: 2.00 },
@@ -745,7 +732,6 @@
       return state.products.find(p => p.code.toUpperCase() === String(code).toUpperCase());
     }
 
-    // التبديل بين الصفحات الأربع
     function switchSheet(sheetName, btn) {
       document.querySelectorAll('.sheet-section').forEach(s => s.classList.remove('active'));
       document.getElementById('sheet-' + sheetName).classList.add('active');
@@ -753,13 +739,8 @@
       if (btn) btn.classList.add('active');
     }
 
-    // ==================== إدارة الفاتورة ====================
     function renderInvoice() {
       const tbody = document.getElementById('invoice-tbody');
-      const optionsHtml = state.products.map(p =>
-        `<option value="${p.code}">${p.code} - ${p.name}</option>`
-      ).join('');
-
       tbody.innerHTML = state.invoiceRows.map((row, idx) => {
         const prod = getProduct(row.code);
         const name = prod ? prod.name : 'صنف غير معرف';
@@ -839,7 +820,6 @@
       document.getElementById('inv-net').textContent = net.toFixed(2);
     }
 
-    // ترحيل الفاتورة إلى الصادر وخصمها من المخزن
     function postInvoiceToSales() {
       if (!state.invoiceRows.length) return alert('الفاتورة فارغة!');
       const dateStr = document.getElementById('inv-date').value || todayFormatted();
@@ -869,7 +849,6 @@
       alert('✅ تم ترحيل الفاتورة إلى سجل الصادر وخصم الكميات من المخزن بنجاح!');
     }
 
-    // تحويل الفاتورة إلى PDF بدون تعليق
     function exportInvoicePDF() {
       const element = document.getElementById('invoice-printable');
       const invNo = document.getElementById('inv-no').value || 'RPM';
@@ -883,7 +862,6 @@
       html2pdf().set(opt).from(element).save();
     }
 
-    // مشاركة الفاتورة عبر واتساب
     function shareInvoiceWhatsApp() {
       const invNo = document.getElementById('inv-no').value;
       const customer = document.getElementById('inv-customer').value || 'عميلنا الكريم';
@@ -898,7 +876,6 @@
       window.open(`https://wa.me/?text=${encodeURIComponent(lines)}`, '_blank');
     }
 
-    // ==================== إدارة المخزن ====================
     function renderStock() {
       const q = (document.getElementById('stock-search').value || '').trim().toLowerCase();
       const tbody = document.getElementById('stock-tbody');
@@ -964,7 +941,6 @@
       saveState();
     }
 
-    // ==================== إدارة الصادر (المبيعات) ====================
     function renderSales() {
       const tbody = document.getElementById('sales-tbody');
       tbody.innerHTML = state.sales.map((s, idx) => {
@@ -1022,7 +998,6 @@
       saveState();
     }
 
-    // ==================== إدارة الوارد (المشتريات) ====================
     function renderPurchases() {
       const tbody = document.getElementById('purchases-tbody');
       tbody.innerHTML = state.purchases.map((p, idx) => {
@@ -1074,7 +1049,6 @@
       saveState();
     }
 
-    // تحديث القوائم المنسدلة والإحصائيات
     function populateSelects() {
       const opts = state.products.map(p => `<option value="${p.code}">${p.code} - ${p.name}</option>`).join('');
       document.getElementById('sale-code').innerHTML = opts;
@@ -1115,7 +1089,6 @@
       updateTopStats();
     }
 
-    // التهيئة عند فتح الصفحة
     window.addEventListener('DOMContentLoaded', () => {
       document.getElementById('inv-date').value = todayFormatted();
       document.getElementById('sale-date').value = todayFormatted();
