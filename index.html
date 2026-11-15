@@ -1,0 +1,1648 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>متجر ار بي ام | RPM STORE - نظام إدارة المخزون والطلبات الاحترافي</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Font: Cairo -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        cairo: ['Cairo', 'sans-serif'],
+                    },
+                    colors: {
+                        rpmDark: '#0f1115',
+                        rpmCard: '#181b22',
+                        rpmElevated: '#20242d',
+                        rpmBorder: '#2a2f3d',
+                        rpmAmber: '#f59e0b',
+                        rpmOrange: '#e67e22',
+                        rpmDeepOrange: '#d35400',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #0f1115;
+            color: #f3f4f6;
+            overflow-x: hidden;
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f1115;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2a2f3d;
+            border-radius: 6px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #f59e0b;
+        }
+        .ig-ring {
+            background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+        }
+        .rpm-gradient {
+            background: linear-gradient(135deg, #f59e0b 0%, #e67e22 50%, #d35400 100%);
+        }
+        .card-shine {
+            background: radial-gradient(circle at top left, rgba(245, 158, 11, 0.08), transparent 60%);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col bg-rpmDark selection:bg-amber-500 selection:text-black">
+
+    <!-- Top Brand Header (Matching @rpm.om Instagram Profile) -->
+    <header class="bg-rpmCard/95 backdrop-blur-md border-b border-rpmBorder sticky top-0 z-30 shadow-2xl">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                
+                <!-- Brand Identity -->
+                <div class="flex items-center gap-4">
+                    <!-- Instagram Story Ring + RPM Classic Muscle Car Avatar -->
+                    <div class="ig-ring p-0.5 rounded-full shadow-lg shadow-amber-500/20 shrink-0">
+                        <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gradient-to-b from-amber-500 via-amber-600 to-stone-900 flex flex-col items-center justify-center border-2 border-rpmDark relative overflow-hidden">
+                            <i class="fa-solid fa-car-side text-rpmDark text-lg sm:text-xl drop-shadow"></i>
+                            <span class="text-[8px] sm:text-[9px] font-black text-white tracking-wider bg-black/60 px-1.5 rounded mt-0.5">RPM STORE</span>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <h1 class="text-lg sm:text-xl font-black text-white tracking-wide">متجر ار بي ام | RPM STORE</h1>
+                            <span class="text-xs font-mono font-bold px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-400 border border-amber-500/30 flex items-center gap-1">
+                                <i class="fa-brands fa-instagram"></i> @rpm.om
+                            </span>
+                            <span class="hidden sm:inline-flex text-[11px] px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-semibold">
+                                37.1K متابع
+                            </span>
+                        </div>
+                        <p class="text-xs text-gray-400 mt-1">
+                            نوفر أحدث الإكسسوارات لجعل سيارتك مريحة وعصرية! 🚀 توصيل سريع لجميع محافظات عمان 🇴🇲
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Action Buttons & Navigation Tabs -->
+                <div class="flex flex-wrap items-center gap-2 sm:gap-3 justify-between lg:justify-end">
+                    <!-- Main View Switcher -->
+                    <div class="inline-flex bg-rpmDark p-1 rounded-xl border border-rpmBorder">
+                        <button onclick="switchMainTab('inventory')" id="tabBtnInventory" class="px-3.5 py-2 rounded-lg text-xs sm:text-sm font-bold transition-all bg-amber-500 text-rpmDark shadow">
+                            <i class="fa-solid fa-boxes-stacked ml-1.5"></i>المخزون والمنتجات
+                        </button>
+                        <button onclick="switchMainTab('orders')" id="tabBtnOrders" class="px-3.5 py-2 rounded-lg text-xs sm:text-sm font-bold transition-all text-gray-400 hover:text-white flex items-center gap-1.5">
+                            <i class="fa-solid fa-receipt"></i>سجل المبيعات
+                            <span id="ordersCountBadge" class="px-1.5 py-0.2 bg-rpmCard text-amber-400 rounded-full text-[11px] border border-rpmBorder">0</span>
+                        </button>
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <!-- Open WhatsApp POS Cart Drawer -->
+                        <button onclick="toggleCartDrawer(true)" class="relative bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-3.5 py-2.5 rounded-xl shadow-lg shadow-emerald-600/20 transition-all flex items-center gap-2 text-xs sm:text-sm">
+                            <i class="fa-brands fa-whatsapp text-base"></i>
+                            <span>فاتورة طلب جديد</span>
+                            <span id="cartCountBadge" class="bg-white text-emerald-900 font-black px-1.5 py-0.2 rounded-full text-xs">0</span>
+                        </button>
+
+                        <!-- Add New Product Button -->
+                        <button onclick="openProductModal()" class="rpm-gradient hover:opacity-95 text-rpmDark font-black px-3.5 py-2.5 rounded-xl shadow-lg shadow-amber-500/20 transition-all flex items-center gap-1.5 text-xs sm:text-sm">
+                            <i class="fa-solid fa-plus-circle text-sm"></i>
+                            <span>إضافة منتج</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Instagram Highlights Bar (Interactive Quick Filters matching @rpm.om) -->
+    <section class="bg-rpmCard/60 border-b border-rpmBorder py-3">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between gap-4 overflow-x-auto pb-1 no-scrollbar">
+                <div class="flex items-center gap-3 sm:gap-5 shrink-0">
+                    <span class="text-xs font-bold text-gray-400 flex items-center gap-1.5 shrink-0">
+                        <i class="fa-solid fa-bolt text-amber-400"></i> فلترة سريعة حسب هايلايت وريلز الحساب:
+                    </span>
+
+                    <!-- Highlight 1: All -->
+                    <button onclick="QuickHighlightFilter('all')" class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-rpmElevated hover:bg-amber-500/20 border border-rpmBorder hover:border-amber-500/50 transition-all text-xs font-semibold shrink-0">
+                        <span class="w-6 h-6 rounded-full rpm-gradient flex items-center justify-center text-rpmDark font-black text-[10px]">الكل</span>
+                        <span>كل منتجات الحساب (15)</span>
+                    </button>
+
+                    <!-- Highlight 2: Diagzone -->
+                    <button onclick="QuickHighlightFilter('جهاز دياج زون')" class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-rpmElevated hover:bg-amber-500/20 border border-rpmBorder hover:border-amber-500/50 transition-all text-xs font-semibold shrink-0">
+                        <span class="w-6 h-6 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/40 flex items-center justify-center text-[11px]"><i class="fa-solid fa-microchip"></i></span>
+                        <span>جهاز دياج زون</span>
+                    </button>
+
+                    <!-- Highlight 3: Car Model -->
+                    <button onclick="QuickHighlightFilter('مجسم سيارة')" class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-rpmElevated hover:bg-amber-500/20 border border-rpmBorder hover:border-amber-500/50 transition-all text-xs font-semibold shrink-0">
+                        <span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/40 flex items-center justify-center text-[11px]"><i class="fa-solid fa-car"></i></span>
+                        <span>مجسم سيارة</span>
+                    </button>
+
+                    <!-- Highlight 4: Reels Products -->
+                    <button onclick="QuickHighlightFilter('ريلز')" class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-rpmElevated hover:bg-amber-500/20 border border-rpmBorder hover:border-amber-500/50 transition-all text-xs font-semibold shrink-0">
+                        <span class="w-6 h-6 rounded-full bg-pink-500/20 text-pink-400 border border-pink-500/40 flex items-center justify-center text-[11px]"><i class="fa-solid fa-film"></i></span>
+                        <span>منتجات الريلز الأكثر طلباً</span>
+                    </button>
+
+                    <!-- Highlight 5: Featured Products -->
+                    <button onclick="QuickHighlightFilter('منتجاتنا المميزة')" class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-rpmElevated hover:bg-amber-500/20 border border-rpmBorder hover:border-amber-500/50 transition-all text-xs font-semibold shrink-0">
+                        <span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 flex items-center justify-center text-[11px]"><i class="fa-solid fa-star"></i></span>
+                        <span>منتجاتنا المميزة</span>
+                    </button>
+                </div>
+
+                <!-- Sync/Restore Official Catalog Button -->
+                <button onclick="openResetConfirmModal()" class="shrink-0 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5">
+                    <i class="fa-solid fa-arrows-rotate"></i>
+                    <span>استعادة/مزامنة منتجات الحساب الأساسية</span>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content Container -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+        <!-- Executive KPI Dashboard Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+            <!-- KPI 1: Total Products & Units -->
+            <div class="bg-rpmCard card-shine border border-rpmBorder rounded-2xl p-4 shadow-md hover:border-amber-500/40 transition-all">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-semibold text-gray-400">إجمالي الأصناف والقطع</p>
+                        <div class="flex items-baseline gap-2 mt-1">
+                            <h3 id="kpiTotalProducts" class="text-2xl font-black text-white">15</h3>
+                            <span class="text-xs text-gray-400">صنف</span>
+                        </div>
+                    </div>
+                    <div class="w-11 h-11 bg-blue-500/10 text-blue-400 rounded-xl flex items-center justify-center text-lg border border-blue-500/20">
+                        <i class="fa-solid fa-cubes"></i>
+                    </div>
+                </div>
+                <div class="mt-3 pt-2.5 border-t border-rpmBorder/60 flex items-center justify-between text-xs">
+                    <span class="text-gray-400">مجموع القطع بالمخزن:</span>
+                    <span id="kpiTotalUnits" class="font-bold text-blue-400 font-mono">0 قطعة</span>
+                </div>
+            </div>
+
+            <!-- KPI 2: Inventory Retail Value -->
+            <div class="bg-rpmCard card-shine border border-rpmBorder rounded-2xl p-4 shadow-md hover:border-amber-500/40 transition-all">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-semibold text-gray-400">القيمة السوقية للمخزون</p>
+                        <div class="flex items-baseline gap-1 mt-1">
+                            <h3 id="kpiRetailValue" class="text-2xl font-black text-white font-mono">0.000</h3>
+                            <span class="text-xs font-bold text-amber-400">ر.ع</span>
+                        </div>
+                    </div>
+                    <div class="w-11 h-11 bg-amber-500/10 text-amber-400 rounded-xl flex items-center justify-center text-lg border border-amber-500/20">
+                        <i class="fa-solid fa-sack-dollar"></i>
+                    </div>
+                </div>
+                <div class="mt-3 pt-2.5 border-t border-rpmBorder/60 flex items-center justify-between text-xs">
+                    <span class="text-gray-400">تكلفة الشراء الإجمالية:</span>
+                    <span id="kpiCostValue" class="font-bold text-gray-300 font-mono">0.000 ر.ع</span>
+                </div>
+            </div>
+
+            <!-- KPI 3: Expected Net Profit -->
+            <div class="bg-rpmCard card-shine border border-rpmBorder rounded-2xl p-4 shadow-md hover:border-emerald-500/40 transition-all">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-semibold text-gray-400">صافي الربح المتوقع</p>
+                        <div class="flex items-baseline gap-1 mt-1">
+                            <h3 id="kpiExpectedProfit" class="text-2xl font-black text-emerald-400 font-mono">0.000</h3>
+                            <span class="text-xs font-bold text-emerald-500">ر.ع</span>
+                        </div>
+                    </div>
+                    <div class="w-11 h-11 bg-emerald-500/10 text-emerald-400 rounded-xl flex items-center justify-center text-lg border border-emerald-500/20">
+                        <i class="fa-solid fa-chart-line"></i>
+                    </div>
+                </div>
+                <div class="mt-3 pt-2.5 border-t border-rpmBorder/60 flex items-center justify-between text-xs">
+                    <span class="text-gray-400">متوسط هامش الربح:</span>
+                    <span id="kpiProfitMargin" class="font-bold text-emerald-400 font-mono">0%</span>
+                </div>
+            </div>
+
+            <!-- KPI 4: Low Stock Alert (Interactive) -->
+            <div onclick="filterLowStockQuick()" class="cursor-pointer bg-rpmCard card-shine border border-rpmBorder rounded-2xl p-4 shadow-md hover:border-red-500/50 transition-all">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-semibold text-gray-400">نواقص وتنبيهات المخزون</p>
+                        <div class="flex items-baseline gap-2 mt-1">
+                            <h3 id="kpiLowStock" class="text-2xl font-black text-amber-400 font-mono">0</h3>
+                            <span class="text-xs text-amber-400/80">تحتاج توفير</span>
+                        </div>
+                    </div>
+                    <div class="w-11 h-11 bg-red-500/10 text-red-400 rounded-xl flex items-center justify-center text-lg border border-red-500/20">
+                        <i class="fa-solid fa-bell"></i>
+                    </div>
+                </div>
+                <div class="mt-3 pt-2.5 border-t border-rpmBorder/60 flex items-center justify-between text-xs">
+                    <span class="text-amber-400 underline">اضغط لعرض النواقص فقط</span>
+                    <i class="fa-solid fa-arrow-left text-amber-400"></i>
+                </div>
+            </div>
+
+            <!-- KPI 5: Recorded Orders & Sales -->
+            <div onclick="switchMainTab('orders')" class="cursor-pointer bg-rpmCard card-shine border border-rpmBorder rounded-2xl p-4 shadow-md hover:border-purple-500/40 transition-all">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-semibold text-gray-400">إجمالي المبيعات المسجلة</p>
+                        <div class="flex items-baseline gap-1 mt-1">
+                            <h3 id="kpiSalesTotal" class="text-2xl font-black text-purple-400 font-mono">0.000</h3>
+                            <span class="text-xs font-bold text-purple-400">ر.ع</span>
+                        </div>
+                    </div>
+                    <div class="w-11 h-11 bg-purple-500/10 text-purple-400 rounded-xl flex items-center justify-center text-lg border border-purple-500/20">
+                        <i class="fa-solid fa-truck-fast"></i>
+                    </div>
+                </div>
+                <div class="mt-3 pt-2.5 border-t border-rpmBorder/60 flex items-center justify-between text-xs">
+                    <span class="text-gray-400">عدد الطلبات المنفذة:</span>
+                    <span id="kpiOrdersCount" class="font-bold text-purple-400">0 طلب</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== TAB 1: INVENTORY & CATALOG SECTION ==================== -->
+        <section id="sectionInventory" class="space-y-5">
+
+            <!-- Search, Filter & View Mode Toolbar -->
+            <div class="bg-rpmCard border border-rpmBorder rounded-2xl p-4 shadow-lg space-y-4">
+                <div class="flex flex-col lg:flex-row gap-3 items-center justify-between">
+                    
+                    <!-- Search Input -->
+                    <div class="relative w-full lg:w-96">
+                        <span class="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none text-gray-400">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </span>
+                        <input type="text" id="searchInput" oninput="applyFilters()" placeholder="ابحث باسم المنتج، الكود (SKU)، أو اسم الريلز..." 
+                            class="w-full pl-4 pr-10 py-2.5 bg-rpmDark border border-rpmBorder rounded-xl text-sm text-white placeholder-gray-500 focus:outline-none focus:border-amber-500 transition-colors">
+                    </div>
+
+                    <!-- Filters & View Toggle -->
+                    <div class="flex flex-wrap items-center gap-2.5 w-full lg:w-auto justify-end">
+                        <!-- Category Filter -->
+                        <select id="categoryFilter" onchange="applyFilters()" class="bg-rpmDark border border-rpmBorder text-white text-xs sm:text-sm rounded-xl px-3 py-2.5 focus:outline-none focus:border-amber-500">
+                            <option value="all">جميع الأقسام (9 أقسام)</option>
+                            <option value="أجهزة فحص وبرمجة">أجهزة فحص وبرمجة</option>
+                            <option value="مجسمات وهدايا">مجسمات وهدايا</option>
+                            <option value="مرايا وأمان">مرايا وأمان</option>
+                            <option value="شاشات وإلكترونيات">شاشات وإلكترونيات</option>
+                            <option value="إصدارات العيد الوطني">إصدارات العيد الوطني</option>
+                            <option value="راحة وقيادة">راحة وقيادة</option>
+                            <option value="معطرات وعناية">معطرات وعناية</option>
+                            <option value="إضاءة وتعديل">إضاءة وتعديل</option>
+                            <option value="طوارئ ومعدات">طوارئ ومعدات</option>
+                        </select>
+
+                        <!-- Stock Status Filter -->
+                        <select id="stockFilter" onchange="applyFilters()" class="bg-rpmDark border border-rpmBorder text-white text-xs sm:text-sm rounded-xl px-3 py-2.5 focus:outline-none focus:border-amber-500">
+                            <option value="all">كل حالات المخزون</option>
+                            <option value="available">متوفر بكثرة</option>
+                            <option value="low">مخزون منخفض (نواقص)</option>
+                            <option value="out">نفد من المخزون (0)</option>
+                        </select>
+
+                        <!-- Export CSV Button -->
+                        <button onclick="exportInventoryCSV()" class="bg-rpmElevated hover:bg-gray-700 text-gray-200 px-3 py-2.5 rounded-xl text-xs font-bold border border-rpmBorder transition-all flex items-center gap-1.5" title="تصدير الجدول لملف إكسل CSV">
+                            <i class="fa-solid fa-file-csv text-emerald-400 text-sm"></i>
+                            <span class="hidden sm:inline">تصدير Excel</span>
+                        </button>
+
+                        <!-- View Mode Toggle (Cards vs Table) -->
+                        <div class="inline-flex bg-rpmDark p-1 rounded-xl border border-rpmBorder">
+                            <button onclick="setViewMode('grid')" id="viewBtnGrid" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-amber-500 text-rpmDark transition-all" title="عرض البطاقات">
+                                <i class="fa-solid fa-grip"></i> بطاقات
+                            </button>
+                            <button onclick="setViewMode('table')" id="viewBtnTable" class="px-3 py-1.5 rounded-lg text-xs font-bold text-gray-400 hover:text-white transition-all" title="عرض الجدول المحاسبي">
+                                <i class="fa-solid fa-table-list"></i> جدول
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Active Filter Status Bar -->
+                <div class="flex items-center justify-between text-xs text-gray-400 pt-2 border-t border-rpmBorder/60">
+                    <div class="flex items-center gap-2">
+                        <span>المنتجات المعروضة حالياً:</span>
+                        <span id="displayedCountBadge" class="px-2 py-0.5 bg-amber-500/15 text-amber-400 font-bold rounded-md border border-amber-500/30">15 منتج</span>
+                        <span id="activeHighlightTag" class="hidden px-2 py-0.5 bg-blue-500/15 text-blue-400 font-bold rounded-md border border-blue-500/30"></span>
+                    </div>
+                    <button onclick="resetFilters()" class="text-amber-400 hover:underline flex items-center gap-1">
+                        <i class="fa-solid fa-filter-circle-xmark"></i> مسح الفلاتر
+                    </button>
+                </div>
+            </div>
+
+            <!-- VIEW 1: RICH PRODUCT CARDS GRID -->
+            <div id="productsGridContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                <!-- Populated dynamically via JS -->
+            </div>
+
+            <!-- VIEW 2: DETAILED ACCOUNTING & INVENTORY TABLE -->
+            <div id="productsTableContainer" class="hidden bg-rpmCard border border-rpmBorder rounded-2xl shadow-xl overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-right border-collapse">
+                        <thead>
+                            <tr class="bg-rpmDark text-gray-400 text-xs border-b border-rpmBorder">
+                                <th class="py-3.5 px-4 font-bold">المنتج والمصدر في الحساب</th>
+                                <th class="py-3.5 px-4 font-bold">القسم</th>
+                                <th class="py-3.5 px-4 font-bold">سعر البيع</th>
+                                <th class="py-3.5 px-4 font-bold">التكلفة</th>
+                                <th class="py-3.5 px-4 font-bold">ربح القطعة</th>
+                                <th class="py-3.5 px-4 font-bold">المخزون</th>
+                                <th class="py-3.5 px-4 font-bold text-center">تحكم سريع</th>
+                                <th class="py-3.5 px-4 font-bold text-center">إجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="productsTableBody" class="divide-y divide-rpmBorder text-sm">
+                            <!-- Populated dynamically via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Empty Search State -->
+            <div id="emptyStateContainer" class="hidden bg-rpmCard border border-rpmBorder rounded-2xl py-16 text-center">
+                <div class="w-16 h-16 bg-rpmElevated text-amber-400 rounded-full flex items-center justify-center mx-auto text-2xl mb-3 border border-rpmBorder">
+                    <i class="fa-solid fa-magnifying-glass-minus"></i>
+                </div>
+                <h4 class="text-white font-bold text-base">لا توجد منتجات مطابقة للبحث</h4>
+                <p class="text-gray-400 text-xs mt-1">اضغط على "مسح الفلاتر" أو "استعادة منتجات الحساب الأساسية" لعرض كافة المنتجات.</p>
+                <button onclick="resetFilters()" class="mt-4 px-4 py-2 bg-amber-500 text-rpmDark font-bold rounded-xl text-xs">
+                    عرض جميع المنتجات (15)
+                </button>
+            </div>
+        </section>
+
+        <!-- ==================== TAB 2: ORDERS & SALES LOG SECTION ==================== -->
+        <section id="sectionOrders" class="hidden space-y-5">
+            <div class="bg-rpmCard border border-rpmBorder rounded-2xl p-5 shadow-lg">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-rpmBorder">
+                    <div>
+                        <h2 class="text-lg font-black text-white flex items-center gap-2">
+                            <i class="fa-brands fa-whatsapp text-emerald-400 text-xl"></i>
+                            <span>سجل طلبات الواتساب والمبيعات (@rpm.om)</span>
+                        </h2>
+                        <p class="text-xs text-gray-400 mt-0.5">جميع الطلبات المسجلة مع تفاصيل التوصيل لمحافظات سلطنة عمان</p>
+                    </div>
+                    <button onclick="toggleCartDrawer(true)" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-4 py-2.5 rounded-xl text-xs sm:text-sm flex items-center gap-2 self-start sm:self-auto">
+                        <i class="fa-solid fa-plus"></i>
+                        <span>إنشاء فاتورة طلب جديد</span>
+                    </button>
+                </div>
+
+                <div id="ordersListContainer" class="mt-4 space-y-3">
+                    <!-- Orders populated via JS -->
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ==================== SLIDE-OVER WHATSAPP POS & ORDER BUILDER DRAWER ==================== -->
+    <div id="cartDrawerBackdrop" class="fixed inset-0 z-40 bg-black/75 backdrop-blur-sm hidden" onclick="toggleCartDrawer(false)"></div>
+    <aside id="cartDrawer" class="fixed top-0 left-0 bottom-0 z-50 w-full max-w-md bg-rpmCard border-r border-rpmBorder shadow-2xl transform -translate-x-full transition-transform duration-300 flex flex-col">
+        <!-- Drawer Header -->
+        <div class="p-4 bg-rpmDark border-b border-rpmBorder flex items-center justify-between">
+            <div class="flex items-center gap-2.5">
+                <div class="w-10 h-10 rounded-xl bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 flex items-center justify-center text-xl">
+                    <i class="fa-brands fa-whatsapp"></i>
+                </div>
+                <div>
+                    <h3 class="font-black text-white text-sm sm:text-base">منشئ طلبات وفواتير الواتساب</h3>
+                    <p class="text-[11px] text-gray-400">يخصم الكمية تلقائياً ويجهز رسالة العميل</p>
+                </div>
+            </div>
+            <button onclick="toggleCartDrawer(false)" class="w-8 h-8 rounded-lg bg-rpmElevated text-gray-400 hover:text-white flex items-center justify-center">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <!-- Drawer Body -->
+        <div class="flex-grow overflow-y-auto p-4 space-y-4">
+            <!-- Quick Add Product Selector -->
+            <div class="bg-rpmDark p-3 rounded-xl border border-rpmBorder">
+                <label class="block text-xs font-bold text-amber-400 mb-1.5">إضافة منتج سريع للفاتورة:</label>
+                <div class="flex gap-2">
+                    <select id="posQuickSelect" class="flex-grow bg-rpmCard border border-rpmBorder rounded-lg px-2.5 py-2 text-xs text-white focus:outline-none focus:border-amber-500">
+                        <!-- Populated via JS -->
+                    </select>
+                    <button onclick="addSelectedProductToCart()" class="px-3 py-2 bg-amber-500 hover:bg-amber-400 text-rpmDark font-black rounded-lg text-xs shrink-0">
+                        + أضف
+                    </button>
+                </div>
+            </div>
+
+            <!-- Selected Cart Items -->
+            <div>
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs font-bold text-gray-300">المنتجات المختارة في الطلب:</span>
+                    <button onclick="clearCart()" class="text-[11px] text-red-400 hover:underline">إفراغ السلة</button>
+                </div>
+                <div id="cartItemsList" class="space-y-2">
+                    <!-- Populated via JS -->
+                </div>
+            </div>
+
+            <!-- Customer & Oman Governorate Delivery Info -->
+            <div class="bg-rpmDark p-3.5 rounded-xl border border-rpmBorder space-y-3">
+                <h4 class="text-xs font-bold text-white flex items-center gap-1.5 border-b border-rpmBorder pb-2">
+                    <i class="fa-solid fa-location-dot text-amber-400"></i>
+                    <span>بيانات العميل والتوصيل (محافظات السلطنة)</span>
+                </h4>
+
+                <div>
+                    <label class="block text-[11px] text-gray-400 mb-1">اسم العميل</label>
+                    <input type="text" id="custName" placeholder="مثال: سالم بن محمد" class="w-full bg-rpmCard border border-rpmBorder rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-500">
+                </div>
+
+                <div class="grid grid-cols-2 gap-2.5">
+                    <div>
+                        <label class="block text-[11px] text-gray-400 mb-1">رقم الواتساب (عُمان)</label>
+                        <input type="tel" id="custPhone" placeholder="9xxxxxxx" class="w-full bg-rpmCard border border-rpmBorder rounded-lg px-3 py-2 text-xs text-white font-mono focus:outline-none focus:border-amber-500">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] text-gray-400 mb-1">المحافظة / الولاية</label>
+                        <select id="custGov" onchange="updateDeliveryFeeByGov()" class="w-full bg-rpmCard border border-rpmBorder rounded-lg px-2.5 py-2 text-xs text-white focus:outline-none focus:border-amber-500">
+                            <option value="مسقط" data-fee="1.500">محافظة مسقط (1.5 ر.ع)</option>
+                            <option value="شمال الباطنة" data-fee="2.000">شمال الباطنة - صحار (2.0 ر.ع)</option>
+                            <option value="جنوب الباطنة" data-fee="2.000">جنوب الباطنة - الرستاق/بركاء (2.0 ر.ع)</option>
+                            <option value="الداخلية" data-fee="2.000">الداخلية - نزوى/بهلاء (2.0 ر.ع)</option>
+                            <option value="جنوب الشرقية" data-fee="2.000">جنوب الشرقية - صور (2.0 ر.ع)</option>
+                            <option value="شمال الشرقية" data-fee="2.000">شمال الشرقية - إبراء (2.0 ر.ع)</option>
+                            <option value="الظاهرة" data-fee="2.000">الظاهرة - عبري (2.0 ر.ع)</option>
+                            <option value="البريمي" data-fee="2.000">محافظة البريمي (2.0 ر.ع)</option>
+                            <option value="ظفار" data-fee="2.500">محافظة ظفار - صلالة (2.5 ر.ع)</option>
+                            <option value="مسندم" data-fee="2.500">محافظة مسندم (2.5 ر.ع)</option>
+                            <option value="الوسطى" data-fee="2.500">محافظة الوسطى (2.5 ر.ع)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-[11px] text-gray-400 mb-1">رسوم شركة التوصيل (ر.ع)</label>
+                    <input type="number" step="0.100" id="deliveryFeeInput" value="1.500" oninput="renderCart()" class="w-full bg-rpmCard border border-rpmBorder rounded-lg px-3 py-1.5 text-xs text-amber-400 font-mono font-bold focus:outline-none focus:border-amber-500">
+                </div>
+            </div>
+        </div>
+
+        <!-- Drawer Footer: Totals & Confirm -->
+        <div class="p-4 bg-rpmDark border-t border-rpmBorder space-y-3">
+            <div class="space-y-1 text-xs">
+                <div class="flex justify-between text-gray-400">
+                    <span>قيمة المنتجات:</span>
+                    <span id="cartSubtotal" class="font-mono text-white">0.000 ر.ع</span>
+                </div>
+                <div class="flex justify-between text-gray-400">
+                    <span>رسوم التوصيل:</span>
+                    <span id="cartDelivery" class="font-mono text-white">1.500 ر.ع</span>
+                </div>
+                <div class="flex justify-between text-sm font-black text-amber-400 pt-1.5 border-t border-rpmBorder">
+                    <span>الإجمالي النهائي للعميل:</span>
+                    <span id="cartGrandTotal" class="font-mono">1.500 ر.ع</span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2">
+                <button onclick="completeOrder(false)" class="py-2.5 px-3 bg-rpmElevated hover:bg-gray-700 text-white font-bold rounded-xl text-xs border border-rpmBorder flex items-center justify-center gap-1.5">
+                    <i class="fa-solid fa-check-double text-amber-400"></i>
+                    <span>اعتماد وخصم المخزون</span>
+                </button>
+                <button onclick="completeOrder(true)" class="py-2.5 px-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs shadow-lg shadow-emerald-600/20 flex items-center justify-center gap-1.5">
+                    <i class="fa-brands fa-whatsapp text-sm"></i>
+                    <span>اعتماد وإرسال واتساب</span>
+                </button>
+            </div>
+        </div>
+    </aside>
+
+    <!-- ==================== ADD / EDIT PRODUCT MODAL ==================== -->
+    <div id="productModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="bg-rpmCard border border-rpmBorder rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl">
+            <div class="px-6 py-4 bg-rpmDark border-b border-rpmBorder flex items-center justify-between">
+                <h3 id="modalTitle" class="font-black text-white text-base sm:text-lg flex items-center gap-2">
+                    <i class="fa-solid fa-plus-circle text-amber-400"></i>
+                    <span>إضافة منتج جديد لمتجر RPM</span>
+                </h3>
+                <button onclick="closeProductModal()" class="text-gray-400 hover:text-white">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <form id="productForm" onsubmit="saveProductForm(event)" class="p-5 space-y-3.5 max-h-[82vh] overflow-y-auto">
+                <input type="hidden" id="formProductId">
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-300 mb-1">اسم المنتج <span class="text-amber-500">*</span></label>
+                    <input type="text" id="formName" required placeholder="مثال: جهاز فحص وبرمجة السيارات Diagzone Pro" 
+                        class="w-full bg-rpmDark border border-rpmBorder rounded-xl px-3.5 py-2 text-white text-sm focus:outline-none focus:border-amber-500">
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-300 mb-1">رمز المنتج (SKU) <span class="text-amber-500">*</span></label>
+                        <input type="text" id="formSku" required placeholder="RPM-DZ-01" 
+                            class="w-full bg-rpmDark border border-rpmBorder rounded-xl px-3.5 py-2 text-white text-sm font-mono focus:outline-none focus:border-amber-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-300 mb-1">القسم <span class="text-amber-500">*</span></label>
+                        <select id="formCategory" required class="w-full bg-rpmDark border border-rpmBorder rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-amber-500">
+                            <option value="أجهزة فحص وبرمجة">أجهزة فحص وبرمجة</option>
+                            <option value="مجسمات وهدايا">مجسمات وهدايا</option>
+                            <option value="مرايا وأمان">مرايا وأمان</option>
+                            <option value="شاشات وإلكترونيات">شاشات وإلكترونيات</option>
+                            <option value="إصدارات العيد الوطني">إصدارات العيد الوطني</option>
+                            <option value="راحة وقيادة">راحة وقيادة</option>
+                            <option value="معطرات وعناية">معطرات وعناية</option>
+                            <option value="إضاءة وتعديل">إضاءة وتعديل</option>
+                            <option value="طوارئ ومعدات">طوارئ ومعدات</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-300 mb-1">الإشارة المرجعية في إنستغرام (هايلايت / ريلز)</label>
+                    <input type="text" id="formSourceTag" placeholder="مثال: ريلز: مراية السيارة صغيرة؟ أو هايلايت: منتجاتنا" 
+                        class="w-full bg-rpmDark border border-rpmBorder rounded-xl px-3.5 py-2 text-white text-xs focus:outline-none focus:border-amber-500">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-amber-400 mb-1">سعر البيع للعميل (ر.ع) <span class="text-amber-500">*</span></label>
+                        <input type="number" step="0.100" min="0" id="formPrice" required placeholder="14.500" 
+                            class="w-full bg-rpmDark border border-rpmBorder rounded-xl px-3.5 py-2 text-white text-sm font-mono focus:outline-none focus:border-amber-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-400 mb-1">سعر التكلفة / الجملة (ر.ع) <span class="text-amber-500">*</span></label>
+                        <input type="number" step="0.100" min="0" id="formCost" required placeholder="8.500" 
+                            class="w-full bg-rpmDark border border-rpmBorder rounded-xl px-3.5 py-2 text-white text-sm font-mono focus:outline-none focus:border-amber-500">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-300 mb-1">الكمية المتوفرة بالمخزون <span class="text-amber-500">*</span></label>
+                        <input type="number" min="0" id="formStock" required placeholder="20" 
+                            class="w-full bg-rpmDark border border-rpmBorder rounded-xl px-3.5 py-2 text-white text-sm font-mono focus:outline-none focus:border-amber-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-300 mb-1">حد تنبيه انخفاض المخزون</label>
+                        <input type="number" min="1" id="formMinStock" value="5" required 
+                            class="w-full bg-rpmDark border border-rpmBorder rounded-xl px-3.5 py-2 text-white text-sm font-mono focus:outline-none focus:border-amber-500">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-300 mb-1">وصف ومميزات المنتج</label>
+                    <textarea id="formDesc" rows="2" placeholder="وصف مختصر يظهر في بطاقة المنتج..." 
+                        class="w-full bg-rpmDark border border-rpmBorder rounded-xl px-3.5 py-2 text-white text-xs focus:outline-none focus:border-amber-500"></textarea>
+                </div>
+
+                <div class="pt-3 flex items-center justify-end gap-2.5 border-t border-rpmBorder">
+                    <button type="button" onclick="closeProductModal()" class="px-4 py-2 bg-rpmElevated hover:bg-gray-700 text-gray-300 rounded-xl text-xs font-bold">
+                        إلغاء
+                    </button>
+                    <button type="submit" class="px-5 py-2 rpm-gradient text-rpmDark rounded-xl text-xs font-black shadow-lg">
+                        حفظ بيانات المنتج
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ==================== CUSTOM CONFIRMATION MODAL (No window.confirm) ==================== -->
+    <div id="confirmModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="bg-rpmCard border border-rpmBorder rounded-2xl w-full max-w-sm p-6 text-center shadow-2xl space-y-4">
+            <div class="w-14 h-14 bg-amber-500/15 text-amber-400 rounded-full flex items-center justify-center mx-auto text-2xl border border-amber-500/30">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <h4 id="confirmModalTitle" class="text-white font-black text-base">تأكيد الإجراء</h4>
+            <p id="confirmModalDesc" class="text-gray-400 text-xs leading-relaxed">هل أنت متأكد من المتابعة؟</p>
+            <div class="flex items-center justify-center gap-3 pt-2">
+                <button onclick="closeConfirmModal()" class="px-4 py-2 bg-rpmElevated hover:bg-gray-700 text-gray-300 rounded-xl text-xs font-bold">
+                    تراجع
+                </button>
+                <button id="confirmModalActionBtn" class="px-5 py-2 bg-amber-500 hover:bg-amber-400 text-rpmDark rounded-xl text-xs font-black">
+                    نعم، تأكيد
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-rpmCard border-t border-rpmBorder py-5 mt-10 text-center text-xs text-gray-400">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+            <p>نظام إدارة المخزون والمبيعات المخصص لـ <span class="text-amber-400 font-bold">متجر ار بي ام | RPM STORE (@rpm.om)</span></p>
+            <p class="text-[11px] text-gray-500">سلطنة عمان 🇴🇲 - جميع الأسعار بالريال العماني (OMR)</p>
+        </div>
+    </footer>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-5 left-5 z-50 transform translate-y-24 opacity-0 transition-all duration-300 bg-emerald-600 text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-2.5 text-xs sm:text-sm font-bold border border-white/10">
+        <i id="toastIcon" class="fa-solid fa-circle-check text-base"></i>
+        <span id="toastMsg">تم الحفظ بنجاح</span>
+    </div>
+
+    <!-- ==================== APPLICATION LOGIC ==================== -->
+    <script>
+        // Storage Keys (v4 ensures clean loading of all 15 @rpm.om products)
+        const STORAGE_KEY_INVENTORY = 'rpm_om_pro_inventory_v4';
+        const STORAGE_KEY_ORDERS = 'rpm_om_pro_orders_v4';
+
+        // Complete 15-Product Catalog Extracted from @rpm.om Instagram Profile (Highlights + Reels + Featured)
+        const officialRpmCatalog = [
+            {
+                id: 'rpm-1',
+                name: 'جهاز فحص وبرمجة السيارات (Diagzone Pro OBD2)',
+                sku: 'RPM-DZ-01',
+                category: 'أجهزة فحص وبرمجة',
+                sourceTag: 'هايلايت: جهاز دياج زون',
+                price: 45.000,
+                cost: 31.000,
+                stock: 12,
+                minStock: 4,
+                icon: 'fa-microchip',
+                desc: 'جهاز فحص كمبيوتر السيارات الشامل وقراءة الأعطال ومسحها وبرمجة الأنظمة مع دعم التحديثات لجميع أنواع السيارات.'
+            },
+            {
+                id: 'rpm-2',
+                name: 'مجسم سيارة مخصص بتفاصيل واقعية (Custom Car Model)',
+                sku: 'RPM-MDL-02',
+                category: 'مجسمات وهدايا',
+                sourceTag: 'هايلايت: مجسم سيارة',
+                price: 14.500,
+                cost: 8.500,
+                stock: 18,
+                minStock: 5,
+                icon: 'fa-car-rear',
+                desc: 'مجسمات سيارات فاخرة مطابقة لسيارتك بتفاصيل دقيقة، مثالية للتابلوه أو كهدية مميزة لعشاق السيارات.'
+            },
+            {
+                id: 'rpm-3',
+                name: 'المرآة البانورامية الواسعة للرؤية الخلفية الشاملة',
+                sku: 'RPM-MIR-03',
+                category: 'مرايا وأمان',
+                sourceTag: 'ريلز: مراية السيارة صغيرة؟',
+                price: 5.500,
+                cost: 2.400,
+                stock: 35,
+                minStock: 8,
+                icon: 'fa-eye',
+                desc: 'مرآة داخلية بانورامية بزاوية رؤية واسعة جداً تلغي النقطة العمياء وتكشف كامل المقصورة والخلف بوضوح عالي.'
+            },
+            {
+                id: 'rpm-4',
+                name: 'قطعة تحويل الشاشة إلى كاربلاي وأندرويد أوتو لاسلكي',
+                sku: 'RPM-CP-04',
+                category: 'شاشات وإلكترونيات',
+                sourceTag: 'ريلز: شاشة السيارة والكاربلاي',
+                price: 16.000,
+                cost: 9.800,
+                stock: 20,
+                minStock: 5,
+                icon: 'fa-wifi',
+                desc: 'تحويل نظام Apple CarPlay و Android Auto في شاشة الوكالة من سلكي إلى لاسلكي بالكامل مع اتصال تلقائي سريع.'
+            },
+            {
+                id: 'rpm-5',
+                name: 'إكسسوار ومعطر العيد الوطني العماني الفاخر',
+                sku: 'RPM-ND-05',
+                category: 'إصدارات العيد الوطني',
+                sourceTag: 'ريلز: تريد شي مميز للعيد الوطني',
+                price: 6.500,
+                cost: 3.000,
+                stock: 42,
+                minStock: 10,
+                icon: 'fa-flag',
+                desc: 'إصدار خاص للعيد الوطني العماني بتصميم دائري معدني فاخر للتابلوه مع علبة إهداء أنيقة وعطر ثابت.'
+            },
+            {
+                id: 'rpm-6',
+                name: 'جهاز وإكسسوار أمان ومراقبة الطفل في السيارة',
+                sku: 'RPM-KID-06',
+                category: 'مرايا وأمان',
+                sourceTag: 'ريلز: خايفه على طفلج؟',
+                price: 7.500,
+                cost: 3.500,
+                stock: 25,
+                minStock: 6,
+                icon: 'fa-child-reaching',
+                desc: 'حل ذكي وآمن لحماية ومتابعة الأطفال في المقاعد الخلفية أثناء القيادة بكل اطمئنان وبدون التلفّت للخلف.'
+            },
+            {
+                id: 'rpm-7',
+                name: 'مسند ومساعد القيادة المريح للمسافات الطويلة (الخطوط)',
+                sku: 'RPM-DRV-07',
+                category: 'راحة وقيادة',
+                sourceTag: 'ريلز: عندك ليسن وتسوق مسافات',
+                price: 8.000,
+                cost: 3.800,
+                stock: 28,
+                minStock: 6,
+                icon: 'fa-road',
+                desc: 'مصمم خصيصاً لراحة اليدين والكتفين أثناء السفر والخطوط الطويلة بين محافظات السلطنة.'
+            },
+            {
+                id: 'rpm-8',
+                name: 'تلبيسة مقود رياضية مريحة مانعة للانزلاق',
+                sku: 'RPM-STR-08',
+                category: 'راحة وقيادة',
+                sourceTag: 'ريلز: ثبات وراحة المقود',
+                price: 6.000,
+                cost: 2.500,
+                stock: 22,
+                minStock: 5,
+                icon: 'fa-circle-dot',
+                desc: 'غطاء مقود بخامات كربونية وجلدية عالية الجودة يوفر قبضة مريحة وثباتاً عالياً أثناء القيادة اليومية.'
+            },
+            {
+                id: 'rpm-9',
+                name: 'فواحة سيارة إلكترونية ذكية بالنانو (تعمل مع حركة السيارة)',
+                sku: 'RPM-FRG-09',
+                category: 'معطرات وعناية',
+                sourceTag: 'قسم: منتجاتنا المميزة',
+                price: 9.500,
+                cost: 4.500,
+                stock: 30,
+                minStock: 8,
+                icon: 'fa-spray-can-sparkles',
+                desc: 'معطر إلكتروني ذكي يعمل بحساس الاهتزاز عند تشغيل السيارة ويتوقف تلقائياً عند إطفائها مع 3 درجات تعطير.'
+            },
+            {
+                id: 'rpm-10',
+                name: 'حامل هاتف مغناطيسي MagSafe مع شحن لاسلكي سريع',
+                sku: 'RPM-MAG-10',
+                category: 'شاشات وإلكترونيات',
+                sourceTag: 'قسم: منتجاتنا المميزة',
+                price: 8.500,
+                cost: 4.200,
+                stock: 19,
+                minStock: 5,
+                icon: 'fa-mobile-screen-button',
+                desc: 'حامل مغناطيسي فائق القوة يدعم الشحن اللاسلكي السريع 15W وثبات الهاتف التام في المطبات والطرق الوعرة.'
+            },
+            {
+                id: 'rpm-11',
+                name: 'إضاءة محيطية (Ambient Light) للتابلوه بتحكم عبر الجوال',
+                sku: 'RPM-LED-11',
+                category: 'إضاءة وتعديل',
+                sourceTag: 'قسم: منتجاتنا المميزة',
+                price: 12.000,
+                cost: 6.000,
+                stock: 14,
+                minStock: 4,
+                icon: 'fa-wand-magic-sparkles',
+                desc: 'ألياف ضوئية RGB بـ 64 لوناً مع تحكم كامل عبر تطبيق الهاتف وتفاعل ذكي مع الصوت والموسيقى.'
+            },
+            {
+                id: 'rpm-12',
+                name: 'داش كام أمامية وخلفية بدقة 4K مع واي فاي (Dash Cam Pro)',
+                sku: 'RPM-CAM-12',
+                category: 'مرايا وأمان',
+                sourceTag: 'قسم: منتجاتنا المميزة',
+                price: 24.000,
+                cost: 14.500,
+                stock: 9,
+                minStock: 3,
+                icon: 'fa-video',
+                desc: 'توثيق كامل للرحلات بدقة فائقة 4K مع رؤية ليلية واضحة وتطبيق مباشر على الهاتف لتحميل المقاطع فوراً.'
+            },
+            {
+                id: 'rpm-13',
+                name: 'منظم الفجوات الجلدي الفاخر بين المقاعد مع حامل أكواب',
+                sku: 'RPM-ORG-13',
+                category: 'راحة وقيادة',
+                sourceTag: 'قسم: منتجاتنا المميزة',
+                price: 5.000,
+                cost: 2.100,
+                stock: 4,
+                minStock: 6,
+                icon: 'fa-couch',
+                desc: 'يمنع سقوط الأغراض والهاتف بين المقاعد ويوفر مساحة تخزين جلدية أنيقة ومنفذ لتمرير كابلات الشحن.'
+            },
+            {
+                id: 'rpm-14',
+                name: 'مضخة إطارات رقمية لاسلكية محمولة مع باور بانك للطوارئ',
+                sku: 'RPM-PMP-14',
+                category: 'طوارئ ومعدات',
+                sourceTag: 'قسم: منتجاتنا المميزة',
+                price: 13.500,
+                cost: 7.500,
+                stock: 11,
+                minStock: 4,
+                icon: 'fa-gauge-Simple-high',
+                desc: 'منفاخ إطارات ذكي بشاشة رقمية يفصل تلقائياً عند الوصول للضغط المطلوب مع كشاف LED ومخرج شحن للطوارئ.'
+            },
+            {
+                id: 'rpm-15',
+                name: 'شاحن سيارة معدني فائق السرعة 65W (منفذين PD + QC3.0)',
+                sku: 'RPM-CHG-15',
+                category: 'شاشات وإلكترونيات',
+                sourceTag: 'قسم: منتجاتنا المميزة',
+                price: 4.500,
+                cost: 1.800,
+                stock: 3,
+                minStock: 8,
+                icon: 'fa-bolt-lightning',
+                desc: 'شاحن سيارة معدني صغير الحجم بقوة 65 واط يشحن الهواتف والأجهزة اللوحية بسرعة فائقة مع حماية من الحرارة.'
+            }
+        ];
+
+        // Default Sample Order
+        const defaultOrders = [
+            {
+                id: 'ORD-1001',
+                date: 'اليوم - 08:45 م',
+                customerName: 'أحمد بن سعيد المعولي',
+                customerPhone: '99123456',
+                governorate: 'مسقط',
+                items: [
+                    { name: 'المرآة البانورامية الواسعة للرؤية الخلفية الشاملة', qty: 1, price: 5.500 },
+                    { name: 'مسند ومساعد القيادة المريح للمسافات الطويلة (الخطوط)', qty: 1, price: 8.000 }
+                ],
+                deliveryFee: 1.500,
+                total: 15.000
+            }
+        ];
+
+        // State Variables
+        let products = [];
+        let orders = [];
+        let cart = [];
+        let viewMode = 'grid'; // 'grid' | 'table'
+        let activeHighlightSearch = '';
+
+        // Load Data on Start
+        function initApp() {
+            const savedProd = localStorage.getItem(STORAGE_KEY_INVENTORY);
+            if (savedProd) {
+                try {
+                    products = JSON.parse(savedProd);
+                    if (!Array.isArray(products) || products.length === 0) {
+                        products = JSON.parse(JSON.stringify(officialRpmCatalog));
+                    }
+                } catch (e) {
+                    products = JSON.parse(JSON.stringify(officialRpmCatalog));
+                }
+            } else {
+                products = JSON.parse(JSON.stringify(officialRpmCatalog));
+                saveInventory();
+            }
+
+            const savedOrd = localStorage.getItem(STORAGE_KEY_ORDERS);
+            if (savedOrd) {
+                try {
+                    orders = JSON.parse(savedOrd);
+                } catch (e) {
+                    orders = [...defaultOrders];
+                }
+            } else {
+                orders = [...defaultOrders];
+                saveOrders();
+            }
+
+            refreshUI();
+            renderCart();
+        }
+
+        function saveInventory() {
+            localStorage.setItem(STORAGE_KEY_INVENTORY, JSON.stringify(products));
+        }
+
+        function saveOrders() {
+            localStorage.setItem(STORAGE_KEY_ORDERS, JSON.stringify(orders));
+        }
+
+        // Refresh KPIs, Product Views, POS Dropdown, and Orders
+        function refreshUI() {
+            updateDashboardKPIs();
+            applyFilters();
+            populatePosSelect();
+            renderOrdersList();
+        }
+
+        // Calculate & Render KPIs
+        function updateDashboardKPIs() {
+            const totalProds = products.length;
+            const totalUnits = products.reduce((acc, p) => acc + Number(p.stock), 0);
+            const retailVal = products.reduce((acc, p) => acc + (Number(p.price) * Number(p.stock)), 0);
+            const costVal = products.reduce((acc, p) => acc + (Number(p.cost || 0) * Number(p.stock)), 0);
+            const expectedProfit = retailVal - costVal;
+            const profitMargin = retailVal > 0 ? Math.round((expectedProfit / retailVal) * 100) : 0;
+            const lowStockCount = products.filter(p => Number(p.stock) <= Number(p.minStock)).length;
+
+            const salesTotal = orders.reduce((acc, o) => acc + Number(o.total), 0);
+
+            document.getElementById('kpiTotalProducts').innerText = totalProds;
+            document.getElementById('kpiTotalUnits').innerText = `${totalUnits} قطعة`;
+            document.getElementById('kpiRetailValue').innerText = retailVal.toFixed(3);
+            document.getElementById('kpiCostValue').innerText = `${costVal.toFixed(3)} ر.ع`;
+            document.getElementById('kpiExpectedProfit').innerText = expectedProfit.toFixed(3);
+            document.getElementById('kpiProfitMargin').innerText = `${profitMargin}%`;
+            document.getElementById('kpiLowStock').innerText = lowStockCount;
+            document.getElementById('kpiSalesTotal').innerText = salesTotal.toFixed(3);
+            document.getElementById('kpiOrdersCount').innerText = `${orders.length} طلب`;
+            document.getElementById('ordersCountBadge').innerText = orders.length;
+        }
+
+        // Highlight Bar Filter
+        function QuickHighlightFilter(keyword) {
+            switchMainTab('inventory');
+            const badge = document.getElementById('activeHighlightTag');
+            if (keyword === 'all') {
+                activeHighlightSearch = '';
+                badge.classList.add('hidden');
+            } else {
+                activeHighlightSearch = keyword;
+                badge.innerText = `فلتر الحساب: ${keyword}`;
+                badge.classList.remove('hidden');
+            }
+            applyFilters();
+        }
+
+        function filterLowStockQuick() {
+            switchMainTab('inventory');
+            document.getElementById('stockFilter').value = 'low';
+            applyFilters();
+            showToast('تم عرض المنتجات ذات المخزون المنخفض فقط');
+        }
+
+        function resetFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('categoryFilter').value = 'all';
+            document.getElementById('stockFilter').value = 'all';
+            activeHighlightSearch = '';
+            document.getElementById('activeHighlightTag').classList.add('hidden');
+            applyFilters();
+        }
+
+        // Apply Search & Filters
+        function applyFilters() {
+            const q = document.getElementById('searchInput').value.trim().toLowerCase();
+            const cat = document.getElementById('categoryFilter').value;
+            const stockStatus = document.getElementById('stockFilter').value;
+
+            const filtered = products.filter(p => {
+                const matchesSearch = !q ||
+                    p.name.toLowerCase().includes(q) ||
+                    p.sku.toLowerCase().includes(q) ||
+                    (p.sourceTag && p.sourceTag.toLowerCase().includes(q)) ||
+                    (p.desc && p.desc.toLowerCase().includes(q));
+
+                const matchesHighlight = !activeHighlightSearch ||
+                    (p.sourceTag && p.sourceTag.includes(activeHighlightSearch)) ||
+                    p.name.includes(activeHighlightSearch);
+
+                const matchesCat = cat === 'all' || p.category === cat;
+
+                let matchesStock = true;
+                const s = Number(p.stock);
+                const m = Number(p.minStock);
+                if (stockStatus === 'available') matchesStock = s > m;
+                if (stockStatus === 'low') matchesStock = s <= m && s > 0;
+                if (stockStatus === 'out') matchesStock = s === 0;
+
+                return matchesSearch && matchesHighlight && matchesCat && matchesStock;
+            });
+
+            document.getElementById('displayedCountBadge').innerText = `${filtered.length} منتج`;
+            renderProductsView(filtered);
+        }
+
+        // Toggle Grid vs Table View
+        function setViewMode(mode) {
+            viewMode = mode;
+            const gridBtn = document.getElementById('viewBtnGrid');
+            const tableBtn = document.getElementById('viewBtnTable');
+            if (mode === 'grid') {
+                gridBtn.className = 'px-3 py-1.5 rounded-lg text-xs font-bold bg-amber-500 text-rpmDark transition-all';
+                tableBtn.className = 'px-3 py-1.5 rounded-lg text-xs font-bold text-gray-400 hover:text-white transition-all';
+            } else {
+                tableBtn.className = 'px-3 py-1.5 rounded-lg text-xs font-bold bg-amber-500 text-rpmDark transition-all';
+                gridBtn.className = 'px-3 py-1.5 rounded-lg text-xs font-bold text-gray-400 hover:text-white transition-all';
+            }
+            applyFilters();
+        }
+
+        // Render Both Grid and Table Views
+        function renderProductsView(list) {
+            const gridContainer = document.getElementById('productsGridContainer');
+            const tableContainer = document.getElementById('productsTableContainer');
+            const emptyContainer = document.getElementById('emptyStateContainer');
+
+            if (list.length === 0) {
+                gridContainer.classList.add('hidden');
+                tableContainer.classList.add('hidden');
+                emptyContainer.classList.remove('hidden');
+                return;
+            }
+
+            emptyContainer.classList.add('hidden');
+
+            if (viewMode === 'grid') {
+                gridContainer.classList.remove('hidden');
+                tableContainer.classList.add('hidden');
+                renderGridCards(list);
+            } else {
+                gridContainer.classList.add('hidden');
+                tableContainer.classList.remove('hidden');
+                renderTableRows(list);
+            }
+        }
+
+        function renderGridCards(list) {
+            const container = document.getElementById('productsGridContainer');
+            container.innerHTML = list.map(p => {
+                const stock = Number(p.stock);
+                const minStock = Number(p.minStock);
+                const isOut = stock === 0;
+                const isLow = stock <= minStock && stock > 0;
+                const unitProfit = (Number(p.price) - Number(p.cost || 0)).toFixed(3);
+                const iconClass = p.icon || 'fa-car-side';
+
+                let badgeHtml = `<span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">متوفر (${stock})</span>`;
+                if (isOut) {
+                    badgeHtml = `<span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-red-500/20 text-red-400 border border-red-500/40">نفد من المخزون (0)</span>`;
+                } else if (isLow) {
+                    badgeHtml = `<span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/40 animate-pulse">مخزون منخفض (${stock})</span>`;
+                }
+
+                const isReel = p.sourceTag && p.sourceTag.includes('ريلز');
+                const sourceColor = isReel
+                    ? 'bg-pink-500/15 text-pink-400 border-pink-500/30'
+                    : 'bg-blue-500/15 text-blue-400 border-blue-500/30';
+
+                return `
+                <div class="bg-rpmCard border ${isLow || isOut ? 'border-amber-500/50' : 'border-rpmBorder'} rounded-2xl p-5 flex flex-col justify-between shadow-lg hover:border-amber-500 transition-all group">
+                    <div>
+                        <!-- Top Row: Icon, SKU, Source Tag -->
+                        <div class="flex items-start justify-between gap-2 mb-3">
+                            <div class="flex items-center gap-2.5">
+                                <div class="w-11 h-11 rounded-xl bg-rpmElevated border border-rpmBorder text-amber-400 flex items-center justify-center text-lg group-hover:scale-105 transition-transform">
+                                    <i class="fa-solid ${escapeHtml(iconClass)}"></i>
+                                </div>
+                                <div>
+                                    <span class="text-[11px] font-mono font-bold text-gray-400 block">${escapeHtml(p.sku)}</span>
+                                    <span class="text-[11px] text-amber-400 font-semibold">${escapeHtml(p.category)}</span>
+                                </div>
+                            </div>
+                            ${p.sourceTag ? `
+                                <span class="text-[10px] font-bold px-2.5 py-1 rounded-lg border ${sourceColor} flex items-center gap-1">
+                                    <i class="fa-brands fa-instagram"></i> ${escapeHtml(p.sourceTag)}
+                                </span>
+                            ` : ''}
+                        </div>
+
+                        <!-- Product Title & Description -->
+                        <h4 class="font-black text-white text-base leading-snug mb-1.5">${escapeHtml(p.name)}</h4>
+                        <p class="text-xs text-gray-400 leading-relaxed line-clamp-2 mb-4">${escapeHtml(p.desc || '')}</p>
+                    </div>
+
+                    <div class="space-y-3 pt-3 border-t border-rpmBorder/70">
+                        <!-- Price, Cost & Profit Box -->
+                        <div class="grid grid-cols-3 gap-2 bg-rpmDark p-2.5 rounded-xl border border-rpmBorder text-center">
+                            <div>
+                                <span class="text-[10px] text-gray-400 block">سعر البيع</span>
+                                <span class="font-mono font-black text-amber-400 text-sm">${Number(p.price).toFixed(3)} <small class="text-[9px]">ر.ع</small></span>
+                            </div>
+                            <div class="border-x border-rpmBorder">
+                                <span class="text-[10px] text-gray-400 block">التكلفة</span>
+                                <span class="font-mono font-bold text-gray-300 text-xs">${Number(p.cost || 0).toFixed(3)} <small class="text-[9px]">ر.ع</small></span>
+                            </div>
+                            <div>
+                                <span class="text-[10px] text-gray-400 block">صافي الربح</span>
+                                <span class="font-mono font-bold text-emerald-400 text-xs">+${unitProfit} <small class="text-[9px]">ر.ع</small></span>
+                            </div>
+                        </div>
+
+                        <!-- Stock Control & Status -->
+                        <div class="flex items-center justify-between">
+                            ${badgeHtml}
+                            <div class="inline-flex items-center gap-1 bg-rpmDark border border-rpmBorder rounded-xl p-1">
+                                <button onclick="adjustStock('${p.id}', -1)" class="w-7 h-7 rounded-lg bg-rpmElevated hover:bg-red-500/20 hover:text-red-400 text-gray-300 flex items-center justify-center text-xs transition-colors" title="إنقاص قطعة">
+                                    <i class="fa-solid fa-minus"></i>
+                                </button>
+                                <span class="w-9 text-center font-mono font-black text-xs text-white">${stock}</span>
+                                <button onclick="adjustStock('${p.id}', 1)" class="w-7 h-7 rounded-lg bg-rpmElevated hover:bg-emerald-500/20 hover:text-emerald-400 text-gray-300 flex items-center justify-center text-xs transition-colors" title="إضافة قطعة">
+                                    <i class="fa-solid fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Bottom Actions: Add to WhatsApp Order + Edit/Delete -->
+                        <div class="flex items-center gap-2 pt-1">
+                            <button onclick="addToCart('${p.id}')" class="flex-grow py-2 px-3 bg-emerald-600/20 hover:bg-emerald-600 text-emerald-400 hover:text-white border border-emerald-500/30 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5">
+                                <i class="fa-brands fa-whatsapp text-sm"></i>
+                                <span>أضف لطلب عميل</span>
+                            </button>
+                            <button onclick="openProductModal('${p.id}')" class="w-9 h-9 rounded-xl bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border border-blue-500/20 flex items-center justify-center text-xs" title="تعديل المنتج">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </button>
+                            <button onclick="confirmDeleteProduct('${p.id}')" class="w-9 h-9 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 flex items-center justify-center text-xs" title="حذف المنتج">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                `;
+            }).join('');
+        }
+
+        function renderTableRows(list) {
+            const tbody = document.getElementById('productsTableBody');
+            tbody.innerHTML = list.map(p => {
+                const stock = Number(p.stock);
+                const isLow = stock <= Number(p.minStock);
+                const unitProfit = (Number(p.price) - Number(p.cost || 0)).toFixed(3);
+
+                return `
+                <tr class="hover:bg-rpmElevated/60 transition-colors">
+                    <td class="py-3.5 px-4">
+                        <div class="font-bold text-white">${escapeHtml(p.name)}</div>
+                        <div class="flex items-center gap-2 mt-1">
+                            <span class="text-xs font-mono text-amber-400">${escapeHtml(p.sku)}</span>
+                            ${p.sourceTag ? `<span class="text-[10px] px-2 py-0.5 bg-rpmDark rounded border border-rpmBorder text-gray-300">${escapeHtml(p.sourceTag)}</span>` : ''}
+                        </div>
+                    </td>
+                    <td class="py-3.5 px-4 text-xs text-gray-300">${escapeHtml(p.category)}</td>
+                    <td class="py-3.5 px-4 font-mono font-bold text-amber-400">${Number(p.price).toFixed(3)} ر.ع</td>
+                    <td class="py-3.5 px-4 font-mono text-gray-400">${Number(p.cost || 0).toFixed(3)} ر.ع</td>
+                    <td class="py-3.5 px-4 font-mono font-bold text-emerald-400">+${unitProfit} ر.ع</td>
+                    <td class="py-3.5 px-4">
+                        <span class="px-2.5 py-1 rounded-full text-xs font-mono font-bold ${isLow ? 'bg-amber-500/15 text-amber-400 border border-amber-500/30' : 'bg-emerald-500/15 text-emerald-400'}">
+                            ${stock} قطعة
+                        </span>
+                    </td>
+                    <td class="py-3.5 px-4 text-center">
+                        <div class="inline-flex items-center gap-1 bg-rpmDark border border-rpmBorder rounded-lg p-1">
+                            <button onclick="adjustStock('${p.id}', -1)" class="w-6 h-6 bg-rpmCard hover:bg-gray-700 rounded text-xs">-</button>
+                            <span class="w-7 text-center font-mono text-xs font-bold">${stock}</span>
+                            <button onclick="adjustStock('${p.id}', 1)" class="w-6 h-6 bg-rpmCard hover:bg-gray-700 rounded text-xs">+</button>
+                        </div>
+                    </td>
+                    <td class="py-3.5 px-4 text-center">
+                        <div class="flex items-center justify-center gap-1.5">
+                            <button onclick="addToCart('${p.id}')" class="px-2.5 py-1.5 bg-emerald-600/20 text-emerald-400 rounded-lg text-xs font-bold" title="إضافة لطلب واتساب">
+                                <i class="fa-brands fa-whatsapp"></i>
+                            </button>
+                            <button onclick="openProductModal('${p.id}')" class="px-2.5 py-1.5 bg-blue-500/15 text-blue-400 rounded-lg text-xs">
+                                <i class="fa-solid fa-pen"></i>
+                            </button>
+                            <button onclick="confirmDeleteProduct('${p.id}')" class="px-2.5 py-1.5 bg-red-500/15 text-red-400 rounded-lg text-xs">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                `;
+            }).join('');
+        }
+
+        // Quick +1 / -1 Stock Adjustment
+        function adjustStock(id, delta) {
+            const item = products.find(p => p.id === id);
+            if (!item) return;
+            const next = Number(item.stock) + delta;
+            if (next < 0) {
+                showToast('الكمية وصلت لصفر بالفعل', 'error');
+                return;
+            }
+            item.stock = next;
+            saveInventory();
+            refreshUI();
+        }
+
+        // Add / Edit Product Modal
+        function openProductModal(editId = null) {
+            const modal = document.getElementById('productModal');
+            const title = document.getElementById('modalTitle');
+            document.getElementById('productForm').reset();
+
+            if (editId) {
+                const p = products.find(item => item.id === editId);
+                if (!p) return;
+                title.innerHTML = `<i class="fa-solid fa-pen-to-square text-amber-400"></i><span>تعديل المنتج: ${escapeHtml(p.name)}</span>`;
+                document.getElementById('formProductId').value = p.id;
+                document.getElementById('formName').value = p.name;
+                document.getElementById('formSku').value = p.sku;
+                document.getElementById('formCategory').value = p.category;
+                document.getElementById('formSourceTag').value = p.sourceTag || '';
+                document.getElementById('formPrice').value = p.price;
+                document.getElementById('formCost').value = p.cost || 0;
+                document.getElementById('formStock').value = p.stock;
+                document.getElementById('formMinStock').value = p.minStock;
+                document.getElementById('formDesc').value = p.desc || '';
+            } else {
+                title.innerHTML = `<i class="fa-solid fa-plus-circle text-amber-400"></i><span>إضافة منتج جديد لمتجر RPM</span>`;
+                document.getElementById('formProductId').value = '';
+                document.getElementById('formSku').value = `RPM-NEW-${products.length + 1}`;
+            }
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeProductModal() {
+            const modal = document.getElementById('productModal');
+            modal.classList.remove('flex');
+            modal.classList.add('hidden');
+        }
+
+        function saveProductForm(e) {
+            e.preventDefault();
+            const id = document.getElementById('formProductId').value;
+            const prodData = {
+                id: id || 'rpm-' + Date.now(),
+                name: document.getElementById('formName').value.trim(),
+                sku: document.getElementById('formSku').value.trim(),
+                category: document.getElementById('formCategory').value,
+                sourceTag: document.getElementById('formSourceTag').value.trim() || 'قسم: منتجاتنا المميزة',
+                price: parseFloat(document.getElementById('formPrice').value) || 0,
+                cost: parseFloat(document.getElementById('formCost').value) || 0,
+                stock: parseInt(document.getElementById('formStock').value) || 0,
+                minStock: parseInt(document.getElementById('formMinStock').value) || 3,
+                desc: document.getElementById('formDesc').value.trim(),
+                icon: 'fa-car-side'
+            };
+
+            if (id) {
+                const idx = products.findIndex(p => p.id === id);
+                if (idx > -1) {
+                    prodData.icon = products[idx].icon || 'fa-car-side';
+                    products[idx] = prodData;
+                }
+                showToast('تم تحديث بيانات المنتج بنجاح');
+            } else {
+                products.unshift(prodData);
+                showToast('تمت إضافة المنتج الجديد للمخزون');
+            }
+
+            saveInventory();
+            refreshUI();
+            closeProductModal();
+        }
+
+        // Custom Confirmation Modal Logic
+        let pendingConfirmAction = null;
+
+        function openConfirmModal(title, desc, callback) {
+            document.getElementById('confirmModalTitle').innerText = title;
+            document.getElementById('confirmModalDesc').innerText = desc;
+            pendingConfirmAction = callback;
+            const modal = document.getElementById('confirmModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeConfirmModal() {
+            const modal = document.getElementById('confirmModal');
+            modal.classList.remove('flex');
+            modal.classList.add('hidden');
+            pendingConfirmAction = null;
+        }
+
+        document.getElementById('confirmModalActionBtn').addEventListener('click', () => {
+            if (typeof pendingConfirmAction === 'function') {
+                pendingConfirmAction();
+            }
+            closeConfirmModal();
+        });
+
+        function confirmDeleteProduct(id) {
+            const p = products.find(item => item.id === id);
+            if (!p) return;
+            openConfirmModal(
+                'حذف المنتج من المخزون',
+                `هل أنت متأكد من حذف (${p.name}) نهائياً من قاعدة البيانات؟`,
+                () => {
+                    products = products.filter(item => item.id !== id);
+                    saveInventory();
+                    refreshUI();
+                    showToast('تم حذف المنتج', 'error');
+                }
+            );
+        }
+
+        function openResetConfirmModal() {
+            openConfirmModal(
+                'مزامنة واستعادة منتجات حساب @rpm.om',
+                'سيتم استعادة قائمة الـ 15 منتجاً الرسمية المستخرجة من حساب متجر ار بي ام مع الأسعار والكميات الافتراضية.',
+                () => {
+                    products = JSON.parse(JSON.stringify(officialRpmCatalog));
+                    saveInventory();
+                    resetFilters();
+                    refreshUI();
+                    showToast('تمت مزامنة جميع منتجات الحساب الـ 15 بنجاح!');
+                }
+            );
+        }
+
+        // ==================== WHATSAPP ORDER & POS CART SYSTEM ====================
+        function toggleCartDrawer(open) {
+            const drawer = document.getElementById('cartDrawer');
+            const backdrop = document.getElementById('cartDrawerBackdrop');
+            if (open) {
+                backdrop.classList.remove('hidden');
+                drawer.classList.remove('-translate-x-full');
+            } else {
+                backdrop.classList.add('hidden');
+                drawer.classList.add('-translate-x-full');
+            }
+        }
+
+        function populatePosSelect() {
+            const sel = document.getElementById('posQuickSelect');
+            sel.innerHTML = products.map(p =>
+                `<option value="${p.id}">${escapeHtml(p.name)} (${Number(p.price).toFixed(3)} ر.ع) - متوفر: ${p.stock}</option>`
+            ).join('');
+        }
+
+        function addSelectedProductToCart() {
+            const id = document.getElementById('posQuickSelect').value;
+            if (id) addToCart(id, false);
+        }
+
+        function addToCart(productId, openDrawer = true) {
+            const prod = products.find(p => p.id === productId);
+            if (!prod) return;
+            if (Number(prod.stock) <= 0) {
+                showToast('عذراً، هذا المنتج نفد من المخزون!', 'error');
+                return;
+            }
+
+            const existing = cart.find(c => c.id === productId);
+            if (existing) {
+                if (existing.qty + 1 > prod.stock) {
+                    showToast('الكمية المطلوبة تتجاوز المتوفر بالمخزون', 'error');
+                    return;
+                }
+                existing.qty += 1;
+            } else {
+                cart.push({
+                    id: prod.id,
+                    name: prod.name,
+                    price: Number(prod.price),
+                    qty: 1
+                });
+            }
+
+            renderCart();
+            showToast(`تمت إضافة (${prod.name}) للفاتورة`);
+            if (openDrawer) toggleCartDrawer(true);
+        }
+
+        function updateCartQty(id, delta) {
+            const item = cart.find(c => c.id === id);
+            if (!item) return;
+            const prod = products.find(p => p.id === id);
+            const nextQty = item.qty + delta;
+
+            if (nextQty <= 0) {
+                cart = cart.filter(c => c.id !== id);
+            } else if (prod && nextQty > Number(prod.stock)) {
+                showToast('لا توجد كمية إضافية بالمخزون', 'error');
+                return;
+            } else {
+                item.qty = nextQty;
+            }
+            renderCart();
+        }
+
+        function clearCart() {
+            cart = [];
+            renderCart();
+        }
+
+        function updateDeliveryFeeByGov() {
+            const sel = document.getElementById('custGov');
+            const fee = sel.options[sel.selectedIndex].getAttribute('data-fee') || '1.500';
+            document.getElementById('deliveryFeeInput').value = fee;
+            renderCart();
+        }
+
+        function renderCart() {
+            const listEl = document.getElementById('cartItemsList');
+            const countBadge = document.getElementById('cartCountBadge');
+            const totalItemsCount = cart.reduce((acc, c) => acc + c.qty, 0);
+            countBadge.innerText = totalItemsCount;
+
+            if (cart.length === 0) {
+                listEl.innerHTML = `
+                    <div class="bg-rpmDark border border-rpmBorder rounded-xl p-6 text-center text-xs text-gray-500">
+                        السلة فارغة. اختر منتجاً من القائمة أو اضغط "أضف لطلب عميل" من بطاقة المنتج.
+                    </div>
+                `;
+            } else {
+                listEl.innerHTML = cart.map(item => `
+                    <div class="bg-rpmDark border border-rpmBorder rounded-xl p-3 flex items-center justify-between gap-2">
+                        <div class="text-xs">
+                            <div class="font-bold text-white">${escapeHtml(item.name)}</div>
+                            <div class="text-amber-400 font-mono mt-0.5">${item.price.toFixed(3)} ر.ع × ${item.qty} = ${(item.price * item.qty).toFixed(3)} ر.ع</div>
+                        </div>
+                        <div class="flex items-center gap-1 bg-rpmCard px-1.5 py-1 rounded-lg border border-rpmBorder shrink-0">
+                            <button onclick="updateCartQty('${item.id}', -1)" class="w-6 h-6 bg-rpmElevated rounded text-xs text-gray-300">-</button>
+                            <span class="w-6 text-center font-mono text-xs font-bold">${item.qty}</span>
+                            <button onclick="updateCartQty('${item.id}', 1)" class="w-6 h-6 bg-rpmElevated rounded text-xs text-gray-300">+</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            const subtotal = cart.reduce((acc, c) => acc + (c.price * c.qty), 0);
+            const delivery = parseFloat(document.getElementById('deliveryFeeInput').value) || 0;
+            const grandTotal = subtotal + (cart.length > 0 ? delivery : 0);
+
+            document.getElementById('cartSubtotal').innerText = `${subtotal.toFixed(3)} ر.ع`;
+            document.getElementById('cartDelivery').innerText = `${delivery.toFixed(3)} ر.ع`;
+            document.getElementById('cartGrandTotal').innerText = `${grandTotal.toFixed(3)} ر.ع`;
+        }
+
+        function completeOrder(openWhatsapp) {
+            if (cart.length === 0) {
+                showToast('الرجاء إضافة منتج واحد على الأقل للطلب', 'error');
+                return;
+            }
+
+            const custName = document.getElementById('custName').value.trim() || 'عميل متجر RPM';
+            const custPhone = document.getElementById('custPhone').value.trim() || '';
+            const custGov = document.getElementById('custGov').value;
+            const delivery = parseFloat(document.getElementById('deliveryFeeInput').value) || 0;
+            const subtotal = cart.reduce((acc, c) => acc + (c.price * c.qty), 0);
+            const grandTotal = subtotal + delivery;
+
+            // Deduct Stock from Inventory
+            cart.forEach(cartItem => {
+                const prod = products.find(p => p.id === cartItem.id);
+                if (prod) {
+                    prod.stock = Math.max(0, Number(prod.stock) - cartItem.qty);
+                }
+            });
+
+            const newOrder = {
+                id: 'ORD-' + Math.floor(1000 + Math.random() * 9000),
+                date: new Date().toLocaleString('ar-OM', { dateStyle: 'short', timeStyle: 'short' }),
+                customerName: custName,
+                customerPhone: custPhone,
+                governorate: custGov,
+                items: JSON.parse(JSON.stringify(cart)),
+                deliveryFee: delivery,
+                total: grandTotal
+            };
+
+            orders.unshift(newOrder);
+            saveInventory();
+            saveOrders();
+
+            if (openWhatsapp) {
+                const itemsLines = newOrder.items.map(i => `• ${i.name} (العدد: ${i.qty}) - ${(i.price * i.qty).toFixed(3)} ر.ع`).join('\n');
+                const waText = `مرحباً بك من *متجر ار بي ام | RPM STORE* (@rpm.om) 🚗✨\n\n` +
+                    `تفاصيل فاتورة طلبك رقم (${newOrder.id}):\n` +
+                    `العميل: ${custName}\n` +
+                    `المحافظة: ${custGov}\n\n` +
+                    `المنتجات:\n${itemsLines}\n\n` +
+                    `رسوم التوصيل: ${delivery.toFixed(3)} ر.ع\n` +
+                    `*الإجمالي النهائي: ${grandTotal.toFixed(3)} ر.ع*\n\n` +
+                    `شكراً لثقتك بنا! نوفر التوصيل السريع لجميع محافظات سلطنة عمان 🇴🇲`;
+
+                const cleanPhone = custPhone.replace(/\D/g, '');
+                const fullPhone = cleanPhone.startsWith('968') ? cleanPhone : (cleanPhone ? '968' + cleanPhone : '');
+                const waUrl = `https://wa.me/${fullPhone}?text=${encodeURIComponent(waText)}`;
+                window.open(waUrl, '_blank');
+            }
+
+            cart = [];
+            document.getElementById('custName').value = '';
+            document.getElementById('custPhone').value = '';
+            renderCart();
+            refreshUI();
+            toggleCartDrawer(false);
+            showToast('تم اعتماد الطلب وخصم الكميات من المخزون بنجاح!');
+        }
+
+        // Render Orders History Tab
+        function renderOrdersList() {
+            const container = document.getElementById('ordersListContainer');
+            if (orders.length === 0) {
+                container.innerHTML = `<p class="text-center text-gray-500 py-8 text-xs">لا توجد طلبات مسجلة حتى الآن.</p>`;
+                return;
+            }
+
+            container.innerHTML = orders.map(o => `
+                <div class="bg-rpmDark border border-rpmBorder rounded-xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div class="space-y-1">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <span class="font-mono font-black text-amber-400 text-sm">${escapeHtml(o.id)}</span>
+                            <span class="text-white font-bold text-sm">${escapeHtml(o.customerName)}</span>
+                            <span class="text-xs px-2 py-0.5 bg-rpmCard rounded border border-rpmBorder text-emerald-400">
+                                <i class="fa-solid fa-location-dot ml-1"></i>${escapeHtml(o.governorate)}
+                            </span>
+                            <span class="text-[11px] text-gray-500">${escapeHtml(o.date)}</span>
+                        </div>
+                        <div class="text-xs text-gray-400">
+                            ${o.items.map(i => `${escapeHtml(i.name)} (${i.qty})`).join(' + ')}
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3 self-end md:self-center">
+                        <div class="text-left">
+                            <span class="text-[10px] text-gray-400 block">إجمالي الفاتورة</span>
+                            <span class="font-mono font-black text-emerald-400 text-base">${Number(o.total).toFixed(3)} ر.ع</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Switch Main Tabs (Inventory vs Orders)
+        function switchMainTab(tab) {
+            const secInv = document.getElementById('sectionInventory');
+            const secOrd = document.getElementById('sectionOrders');
+            const btnInv = document.getElementById('tabBtnInventory');
+            const btnOrd = document.getElementById('tabBtnOrders');
+
+            if (tab === 'inventory') {
+                secInv.classList.remove('hidden');
+                secOrd.classList.add('hidden');
+                btnInv.className = 'px-3.5 py-2 rounded-lg text-xs sm:text-sm font-bold transition-all bg-amber-500 text-rpmDark shadow';
+                btnOrd.className = 'px-3.5 py-2 rounded-lg text-xs sm:text-sm font-bold transition-all text-gray-400 hover:text-white flex items-center gap-1.5';
+            } else {
+                secInv.classList.add('hidden');
+                secOrd.classList.remove('hidden');
+                btnOrd.className = 'px-3.5 py-2 rounded-lg text-xs sm:text-sm font-bold transition-all bg-amber-500 text-rpmDark shadow flex items-center gap-1.5';
+                btnInv.className = 'px-3.5 py-2 rounded-lg text-xs sm:text-sm font-bold transition-all text-gray-400 hover:text-white';
+            }
+        }
+
+        // Export Inventory to Excel CSV (UTF-8 with BOM for Arabic support)
+        function exportInventoryCSV() {
+            const headers = ['الرمز SKU', 'اسم المنتج', 'القسم', 'المصدر في الحساب', 'سعر البيع (ر.ع)', 'التكلفة (ر.ع)', 'الكمية المتوفرة'];
+            const rows = products.map(p => [
+                p.sku,
+                `"${p.name.replace(/"/g, '""')}"`,
+                p.category,
+                p.sourceTag || '',
+                Number(p.price).toFixed(3),
+                Number(p.cost || 0).toFixed(3),
+                p.stock
+            ]);
+
+            const csvContent = '\uFEFF' + [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', 'rpm_store_oman_inventory.csv');
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            showToast('تم تحميل ملف جرد المخزون بنجاح');
+        }
+
+        // Toast Notification
+        function showToast(msg, type = 'success') {
+            const toast = document.getElementById('toast');
+            const icon = document.getElementById('toastIcon');
+            document.getElementById('toastMsg').innerText = msg;
+
+            if (type === 'error') {
+                toast.className = 'fixed bottom-5 left-5 z-50 transform translate-y-0 opacity-100 transition-all duration-300 bg-red-600 text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-2.5 text-xs sm:text-sm font-bold';
+                icon.className = 'fa-solid fa-circle-exclamation text-base';
+            } else {
+                toast.className = 'fixed bottom-5 left-5 z-50 transform translate-y-0 opacity-100 transition-all duration-300 bg-emerald-600 text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-2.5 text-xs sm:text-sm font-bold';
+                icon.className = 'fa-solid fa-circle-check text-base';
+            }
+
+            setTimeout(() => {
+                toast.classList.add('translate-y-24', 'opacity-0');
+            }, 3000);
+        }
+
+        function escapeHtml(str) {
+            return String(str).replace(/[&<>'"]/g, tag => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+            }[tag] || tag));
+        }
+
+        window.onload = initApp;
+    </script>
+</body>
+</html>
