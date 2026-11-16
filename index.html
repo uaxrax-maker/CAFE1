@@ -6,14 +6,14 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>متجر ار بي ام | RPM STORE - نظام الكاشير والمخزون v8.0</title>
+    <title>متجر ار بي ام | RPM STORE - نظام الكاشير والمخزون v9.0</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts: Tajawal & JetBrains Mono -->
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
     <!-- FontAwesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- jsPDF for Direct PDF Generation -->
+    <!-- jsPDF for Direct A4 PDF Generation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
     <script>
@@ -167,8 +167,8 @@
                 <div class="truncate">
                     <div class="flex items-center gap-2">
                         <h1 class="text-base sm:text-lg font-black text-white tracking-tight truncate">متجر ار بي ام | RPM STORE</h1>
-                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-black bg-amber-500 text-carbon-950 shadow">
-                            v8.0 PRO
+                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-black bg-emerald-500 text-carbon-950 shadow">
+                            v9.0 A4-PRO
                         </span>
                     </div>
                     <p class="text-[11px] sm:text-xs text-gray-400 truncate mt-0.5">
@@ -1746,7 +1746,7 @@
         }
 
 
-        // ==================== v8.0 CENTERED SYMMETRIC PDF ENGINE ====================
+        // ==================== v9.0 A4 PORTRAIT WHATSAPP-PROOF PDF ENGINE ====================
         function buildPrintableInvoiceHTML(inv) {
             const rowsHtml = inv.items.map((item, idx) => `
                 <tr style="border-bottom: 1px solid #E5E7EB;">
@@ -1849,7 +1849,7 @@
             }, 60);
         }
 
-        // v8.0 Symmetric Center-Column Canvas PDF Generator (80px Safe Margins on Left & Right)
+        // v9.0 A4-Portrait Canvas PDF Generator (Prevents WhatsApp Square Thumbnail Cropping)
         async function shareOrDownloadInvoicePDF() {
             if (!currentPreviewInvoice) return;
             const inv = currentPreviewInvoice;
@@ -1868,11 +1868,17 @@
 
                 const scale = 2;
                 const W = 800;
-                const pad = 80; // Huge 80px safe margin on both Right and Left!
-                const boxW = W - (pad * 2); // 640px centered box
+                const pad = 60;
+                const boxW = W - (pad * 2); // 680px
                 const centerX = W / 2;      // 400
 
-                function drawCentered(ctx, text, cx, y) {
+                // Wraps Arabic text with Right-To-Left mark (\u200F) so mixed English words stay in correct order
+                function drawCenteredRTL(ctx, text, cx, y) {
+                    ctx.textAlign = 'center';
+                    ctx.fillText('\u200F' + String(text || ''), cx, y);
+                }
+
+                function drawCenteredLTR(ctx, text, cx, y) {
                     ctx.textAlign = 'center';
                     ctx.fillText(String(text || ''), cx, y);
                 }
@@ -1913,131 +1919,134 @@
                 tempCtx.font = '800 14px Tajawal, sans-serif';
 
                 const preparedItems = inv.items.map((item, idx) => {
-                    const nameLines = wrapText(tempCtx, item.name, 260);
+                    const nameLines = wrapText(tempCtx, item.name, 280);
                     const rowH = Math.max(56, (nameLines.length * 22) + (item.sku ? 26 : 16));
                     return { ...item, idx: idx + 1, nameLines, rowH };
                 });
 
                 const itemsTotalH = preparedItems.reduce((sum, i) => sum + i.rowH, 0);
-                const H = 380 + itemsTotalH + 240;
+                // Minimum height ensures tall A4 aspect ratio so WhatsApp never zooms/crops the sides
+                const contentH = 380 + itemsTotalH + 240;
+                const H = Math.max(1080, contentH);
 
                 const canvas = document.createElement('canvas');
                 canvas.width = W * scale;
                 canvas.height = H * scale;
                 const ctx = canvas.getContext('2d');
                 ctx.scale(scale, scale);
+                ctx.direction = 'rtl';
 
-                // 1. White Page Surface
+                // 1. Pure White A4 Page Surface
                 ctx.fillStyle = '#FFFFFF';
                 ctx.fillRect(0, 0, W, H);
 
-                // 2. Outer Card Border (Inside 50px margin)
+                // 2. Invoice Card Container Border
+                const cardH = contentH - 40;
                 ctx.strokeStyle = '#CBD5E1';
                 ctx.lineWidth = 2;
-                strokeBox(ctx, 50, 30, W - 100, H - 60, 16);
+                strokeBox(ctx, 35, 25, W - 70, cardH, 16);
 
-                // Top Amber Accent Bar
+                // Top Gold Accent Bar
                 ctx.fillStyle = '#F59E0B';
-                fillBox(ctx, 50, 30, W - 100, 8, 4);
+                fillBox(ctx, 35, 25, W - 70, 8, 4);
 
-                let y = 65;
+                let y = 60;
 
-                // 3. Centered Header Block (100% Immune to Right/Left Clipping)
+                // 3. Centered Brand Header
                 ctx.fillStyle = '#1E293B';
                 fillBox(ctx, centerX - 65, y, 130, 28, 8);
                 ctx.fillStyle = '#F59E0B';
                 ctx.font = '900 13px "JetBrains Mono", monospace';
-                drawCentered(ctx, 'RPM STORE', centerX, y + 19);
+                drawCenteredLTR(ctx, 'RPM STORE', centerX, y + 19);
 
-                y += 52;
+                y += 50;
                 ctx.fillStyle = '#0F172A';
                 ctx.font = '900 22px Tajawal, sans-serif';
-                drawCentered(ctx, 'متجر ار بي ام لإكسسوارات وأجهزة السيارات', centerX, y);
+                drawCenteredRTL(ctx, 'متجر ار بي ام لإكسسوارات وأجهزة السيارات', centerX, y);
 
                 y += 26;
                 ctx.fillStyle = '#475569';
                 ctx.font = '700 13px Tajawal, sans-serif';
-                drawCentered(ctx, 'سلطنة عُمان • فاتورة مبيعات إلكترونية معتمدة', centerX, y);
+                drawCenteredRTL(ctx, 'سلطنة عُمان • فاتورة مبيعات إلكترونية معتمدة', centerX, y);
 
                 y += 28;
                 ctx.fillStyle = '#FEF3C7';
                 ctx.strokeStyle = '#F59E0B';
                 ctx.lineWidth = 1;
-                fillBox(ctx, centerX - 150, y - 18, 300, 30, 8);
-                strokeBox(ctx, centerX - 150, y - 18, 300, 30, 8);
+                fillBox(ctx, centerX - 160, y - 18, 320, 30, 8);
+                strokeBox(ctx, centerX - 160, y - 18, 320, 30, 8);
 
                 ctx.fillStyle = '#B45309';
                 ctx.font = '800 13px Tajawal, sans-serif';
-                drawCentered(ctx, `فاتورة رقم: #${inv.id}  |  ${inv.dateFormatted}`, centerX, y + 2);
+                drawCenteredRTL(ctx, `رقم الفاتورة: #${inv.id}   |   ${inv.dateFormatted}`, centerX, y + 2);
 
                 y += 32;
 
-                // 4. Two-Column Centered Customer & Delivery Box
+                // 4. Customer & Delivery Box
                 ctx.fillStyle = '#F8FAFC';
                 ctx.strokeStyle = '#E2E8F0';
                 ctx.lineWidth = 1.5;
                 fillBox(ctx, pad, y, boxW, 92, 12);
                 strokeBox(ctx, pad, y, boxW, 92, 12);
 
-                // Vertical Divider in middle of box
                 ctx.beginPath();
                 ctx.moveTo(centerX, y + 12);
                 ctx.lineTo(centerX, y + 80);
                 ctx.stroke();
 
-                const rightColCenter = centerX + (boxW / 4); // 560
-                const leftColCenter = centerX - (boxW / 4);  // 240
+                const rightColCenter = centerX + (boxW / 4); // 570
+                const leftColCenter = centerX - (boxW / 4);  // 230
 
-                // Customer (Right Half Center)
+                // Customer (Right Half)
                 ctx.fillStyle = '#64748B';
                 ctx.font = '700 12px Tajawal, sans-serif';
-                drawCentered(ctx, 'بيانات العميل', rightColCenter, y + 24);
+                drawCenteredRTL(ctx, 'بيانات العميل', rightColCenter, y + 24);
 
                 ctx.fillStyle = '#0F172A';
                 ctx.font = '800 15px Tajawal, sans-serif';
-                drawCentered(ctx, inv.customerName || 'عميل متجر RPM', rightColCenter, y + 48);
+                drawCenteredRTL(ctx, inv.customerName || 'عميل متجر ار بي ام', rightColCenter, y + 48);
 
                 ctx.fillStyle = '#334155';
                 ctx.font = '700 13px "JetBrains Mono", monospace';
-                drawCentered(ctx, inv.customerPhone || '-', rightColCenter, y + 72);
+                drawCenteredLTR(ctx, inv.customerPhone ? `Tel: ${inv.customerPhone}` : '-', rightColCenter, y + 72);
 
-                // Delivery (Left Half Center)
+                // Delivery (Left Half)
                 ctx.fillStyle = '#64748B';
                 ctx.font = '700 12px Tajawal, sans-serif';
-                drawCentered(ctx, 'المنطقة وطريقة الدفع', leftColCenter, y + 24);
+                drawCenteredRTL(ctx, 'المنطقة وطريقة الدفع', leftColCenter, y + 24);
 
                 ctx.fillStyle = '#0F172A';
                 ctx.font = '800 15px Tajawal, sans-serif';
-                drawCentered(ctx, inv.governorate, leftColCenter, y + 48);
+                drawCenteredRTL(ctx, inv.governorate, leftColCenter, y + 48);
 
                 ctx.fillStyle = '#334155';
                 ctx.font = '700 12px Tajawal, sans-serif';
-                drawCentered(ctx, inv.paymentMethod || 'تحويل بنكي', leftColCenter, y + 72);
+                drawCenteredRTL(ctx, inv.paymentMethod || 'تحويل بنكي', leftColCenter, y + 72);
 
                 y += 110;
 
-                // 5. Table Header Bar (All Columns Centered inside 640px Box)
+                // 5. Table Header Bar
                 ctx.fillStyle = '#1E293B';
                 fillBox(ctx, pad, y, boxW, 40, 8);
 
-                // Column Centers inside [80 .. 720]
-                const cIdx = 690;   // #
-                const cName = 530;  // الصنف
+                // Column Centers inside [60 .. 740]
+                const cIdx = 710;   // #
+                const cName = 540;  // الصنف
                 const cQty = 345;   // الكمية
-                const cPrice = 250; // السعر
-                const cTotal = 140; // الإجمالي
+                const cPrice = 245; // السعر
+                const cTotal = 125; // الإجمالي
 
                 ctx.fillStyle = '#F8FAFC';
                 ctx.font = '800 13px Tajawal, sans-serif';
-                drawCentered(ctx, '#', cIdx, y + 25);
-                drawCentered(ctx, 'البيان / الصنف', cName, y + 25);
-                drawCentered(ctx, 'الكمية', cQty, y + 25);
-                drawCentered(ctx, 'سعر الوحدة', cPrice, y + 25);
-                drawCentered(ctx, 'الإجمالي', cTotal, y + 25);
+                drawCenteredLTR(ctx, '#', cIdx, y + 25);
+                drawCenteredRTL(ctx, 'البيان / الصنف', cName, y + 25);
+                drawCenteredRTL(ctx, 'الكمية', cQty, y + 25);
+                drawCenteredRTL(ctx, 'سعر الوحدة', cPrice, y + 25);
+                drawCenteredRTL(ctx, 'الإجمالي', cTotal, y + 25);
 
                 y += 40;
 
-                // 6. Table Rows (Every single cell is center-anchored!)
+                // 6. Table Rows
                 preparedItems.forEach(item => {
                     ctx.strokeStyle = '#E2E8F0';
                     ctx.lineWidth = 1;
@@ -2048,38 +2057,38 @@
 
                     ctx.fillStyle = '#64748B';
                     ctx.font = '700 13px "JetBrains Mono", monospace';
-                    drawCentered(ctx, String(item.idx), cIdx, y + 28);
+                    drawCenteredLTR(ctx, String(item.idx), cIdx, y + 28);
 
                     ctx.fillStyle = '#0F172A';
                     ctx.font = '800 14px Tajawal, sans-serif';
                     item.nameLines.forEach((line, lIdx) => {
-                        drawCentered(ctx, line, cName, y + 24 + (lIdx * 21));
+                        drawCenteredRTL(ctx, line, cName, y + 24 + (lIdx * 21));
                     });
 
                     if (item.sku) {
                         ctx.fillStyle = '#64748B';
                         ctx.font = '700 11px "JetBrains Mono", monospace';
-                        drawCentered(ctx, item.sku, cName, y + 24 + (item.nameLines.length * 21));
+                        drawCenteredLTR(ctx, item.sku, cName, y + 24 + (item.nameLines.length * 21));
                     }
 
                     ctx.fillStyle = '#0F172A';
                     ctx.font = '800 14px "JetBrains Mono", monospace';
-                    drawCentered(ctx, String(item.qty), cQty, y + 28);
+                    drawCenteredLTR(ctx, String(item.qty), cQty, y + 28);
 
                     ctx.fillStyle = '#334155';
                     ctx.font = '700 13px "JetBrains Mono", monospace';
-                    drawCentered(ctx, formatOMR(item.price), cPrice, y + 28);
+                    drawCenteredLTR(ctx, formatOMR(item.price), cPrice, y + 28);
 
                     ctx.fillStyle = '#0F172A';
                     ctx.font = '800 14px "JetBrains Mono", monospace';
-                    drawCentered(ctx, `${formatOMR(item.price * item.qty)} OMR`, cTotal, y + 28);
+                    drawCenteredLTR(ctx, `${formatOMR(item.price * item.qty)} OMR`, cTotal, y + 28);
 
                     y += item.rowH;
                 });
 
                 y += 24;
 
-                // 7. Centered Summary Box
+                // 7. Summary Box
                 ctx.fillStyle = '#F8FAFC';
                 ctx.strokeStyle = '#E2E8F0';
                 ctx.lineWidth = 1.5;
@@ -2088,7 +2097,7 @@
 
                 ctx.fillStyle = '#475569';
                 ctx.font = '700 14px Tajawal, sans-serif';
-                drawCentered(ctx, `مجموع الأصناف: ${formatOMR(inv.subtotal)} ر.ع   |   رسوم التوصيل: ${formatOMR(inv.deliveryFee)} ر.ع`, centerX, y + 35);
+                drawCenteredRTL(ctx, `مجموع الأصناف: ${formatOMR(inv.subtotal)} ر.ع   |   رسوم التوصيل: ${formatOMR(inv.deliveryFee)} ر.ع`, centerX, y + 35);
 
                 ctx.strokeStyle = '#CBD5E1';
                 ctx.lineWidth = 1;
@@ -2099,19 +2108,24 @@
 
                 ctx.fillStyle = '#D97706';
                 ctx.font = '900 19px Tajawal, sans-serif';
-                drawCentered(ctx, `الإجمالي النهائي للفاتورة: ${formatOMR(inv.total)} ر.ع`, centerX, y + 86);
+                drawCenteredRTL(ctx, `الإجمالي النهائي للفاتورة: ${formatOMR(inv.total)} ر.ع`, centerX, y + 86);
 
-                // 8. Footer
-                const footerY = H - 55;
+                // 8. Footer inside card
+                const footerY = cardH - 5;
                 ctx.fillStyle = '#64748B';
                 ctx.font = '700 13px Tajawal, sans-serif';
-                drawCentered(ctx, 'شكراً لتسوقكم من متجر ار بي ام (RPM STORE) • سلطنة عُمان', centerX, footerY);
+                drawCenteredRTL(ctx, 'شكراً لتسوقكم من متجر ار بي ام (RPM STORE) • سلطنة عُمان', centerX, footerY);
 
-                // 9. Export PDF
+                // 9. Export to Standard A4 Portrait PDF with 18mm Left & Right Margins
                 const imgData = canvas.toDataURL('image/png', 1.0);
                 const { jsPDF } = window.jspdf;
+
                 const pdfW = 210;
-                const pdfH = Math.round((H * pdfW) / W);
+                const marginX = 18; // 18mm white margin on both sides so WhatsApp never crops edges
+                const marginY = 12;
+                const renderW = pdfW - (marginX * 2); // 174mm
+                const renderH = Math.round((H * renderW) / W);
+                const pdfH = Math.max(297, renderH + (marginY * 2));
 
                 const pdf = new jsPDF({
                     orientation: 'p',
@@ -2119,7 +2133,10 @@
                     format: [pdfW, pdfH]
                 });
 
-                pdf.addImage(imgData, 'PNG', 0, 0, pdfW, pdfH);
+                pdf.setFillColor(255, 255, 255);
+                pdf.rect(0, 0, pdfW, pdfH, 'F');
+
+                pdf.addImage(imgData, 'PNG', marginX, marginY, renderW, renderH);
 
                 const fileName = `RPM-${inv.id}.pdf`;
                 const pdfBlob = pdf.output('blob');
