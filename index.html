@@ -1849,7 +1849,6 @@
             }, 60);
         }
 
-        // v9.0 A4-Portrait Canvas PDF Generator (Prevents WhatsApp Square Thumbnail Cropping)
         async function shareOrDownloadInvoicePDF() {
             if (!currentPreviewInvoice) return;
             const inv = currentPreviewInvoice;
@@ -1869,10 +1868,9 @@
                 const scale = 2;
                 const W = 800;
                 const pad = 60;
-                const boxW = W - (pad * 2); // 680px
-                const centerX = W / 2;      // 400
+                const boxW = W - (pad * 2);
+                const centerX = W / 2;
 
-                // Wraps Arabic text with Right-To-Left mark (\u200F) so mixed English words stay in correct order
                 function drawCenteredRTL(ctx, text, cx, y) {
                     ctx.textAlign = 'center';
                     ctx.fillText('\u200F' + String(text || ''), cx, y);
@@ -1925,7 +1923,6 @@
                 });
 
                 const itemsTotalH = preparedItems.reduce((sum, i) => sum + i.rowH, 0);
-                // Minimum height ensures tall A4 aspect ratio so WhatsApp never zooms/crops the sides
                 const contentH = 380 + itemsTotalH + 240;
                 const H = Math.max(1080, contentH);
 
@@ -1936,23 +1933,19 @@
                 ctx.scale(scale, scale);
                 ctx.direction = 'rtl';
 
-                // 1. Pure White A4 Page Surface
                 ctx.fillStyle = '#FFFFFF';
                 ctx.fillRect(0, 0, W, H);
 
-                // 2. Invoice Card Container Border
                 const cardH = contentH - 40;
                 ctx.strokeStyle = '#CBD5E1';
                 ctx.lineWidth = 2;
                 strokeBox(ctx, 35, 25, W - 70, cardH, 16);
 
-                // Top Gold Accent Bar
                 ctx.fillStyle = '#F59E0B';
                 fillBox(ctx, 35, 25, W - 70, 8, 4);
 
                 let y = 60;
 
-                // 3. Centered Brand Header
                 ctx.fillStyle = '#1E293B';
                 fillBox(ctx, centerX - 65, y, 130, 28, 8);
                 ctx.fillStyle = '#F59E0B';
@@ -1982,7 +1975,6 @@
 
                 y += 32;
 
-                // 4. Customer & Delivery Box
                 ctx.fillStyle = '#F8FAFC';
                 ctx.strokeStyle = '#E2E8F0';
                 ctx.lineWidth = 1.5;
@@ -1994,10 +1986,9 @@
                 ctx.lineTo(centerX, y + 80);
                 ctx.stroke();
 
-                const rightColCenter = centerX + (boxW / 4); // 570
-                const leftColCenter = centerX - (boxW / 4);  // 230
+                const rightColCenter = centerX + (boxW / 4);
+                const leftColCenter = centerX - (boxW / 4);
 
-                // Customer (Right Half)
                 ctx.fillStyle = '#64748B';
                 ctx.font = '700 12px Tajawal, sans-serif';
                 drawCenteredRTL(ctx, 'بيانات العميل', rightColCenter, y + 24);
@@ -2010,7 +2001,6 @@
                 ctx.font = '700 13px "JetBrains Mono", monospace';
                 drawCenteredLTR(ctx, inv.customerPhone ? `Tel: ${inv.customerPhone}` : '-', rightColCenter, y + 72);
 
-                // Delivery (Left Half)
                 ctx.fillStyle = '#64748B';
                 ctx.font = '700 12px Tajawal, sans-serif';
                 drawCenteredRTL(ctx, 'المنطقة وطريقة الدفع', leftColCenter, y + 24);
@@ -2025,16 +2015,14 @@
 
                 y += 110;
 
-                // 5. Table Header Bar
                 ctx.fillStyle = '#1E293B';
                 fillBox(ctx, pad, y, boxW, 40, 8);
 
-                // Column Centers inside [60 .. 740]
-                const cIdx = 710;   // #
-                const cName = 540;  // الصنف
-                const cQty = 345;   // الكمية
-                const cPrice = 245; // السعر
-                const cTotal = 125; // الإجمالي
+                const cIdx = 710;
+                const cName = 540;
+                const cQty = 345;
+                const cPrice = 245;
+                const cTotal = 125;
 
                 ctx.fillStyle = '#F8FAFC';
                 ctx.font = '800 13px Tajawal, sans-serif';
@@ -2046,7 +2034,6 @@
 
                 y += 40;
 
-                // 6. Table Rows
                 preparedItems.forEach(item => {
                     ctx.strokeStyle = '#E2E8F0';
                     ctx.lineWidth = 1;
@@ -2088,7 +2075,6 @@
 
                 y += 24;
 
-                // 7. Summary Box
                 ctx.fillStyle = '#F8FAFC';
                 ctx.strokeStyle = '#E2E8F0';
                 ctx.lineWidth = 1.5;
@@ -2110,20 +2096,18 @@
                 ctx.font = '900 19px Tajawal, sans-serif';
                 drawCenteredRTL(ctx, `الإجمالي النهائي للفاتورة: ${formatOMR(inv.total)} ر.ع`, centerX, y + 86);
 
-                // 8. Footer inside card
                 const footerY = cardH - 5;
                 ctx.fillStyle = '#64748B';
                 ctx.font = '700 13px Tajawal, sans-serif';
                 drawCenteredRTL(ctx, 'شكراً لتسوقكم من متجر ار بي ام (RPM STORE) • سلطنة عُمان', centerX, footerY);
 
-                // 9. Export to Standard A4 Portrait PDF with 18mm Left & Right Margins
                 const imgData = canvas.toDataURL('image/png', 1.0);
                 const { jsPDF } = window.jspdf;
 
                 const pdfW = 210;
-                const marginX = 18; // 18mm white margin on both sides so WhatsApp never crops edges
+                const marginX = 18;
                 const marginY = 12;
-                const renderW = pdfW - (marginX * 2); // 174mm
+                const renderW = pdfW - (marginX * 2);
                 const renderH = Math.round((H * renderW) / W);
                 const pdfH = Math.max(297, renderH + (marginY * 2));
 
@@ -2135,23 +2119,44 @@
 
                 pdf.setFillColor(255, 255, 255);
                 pdf.rect(0, 0, pdfW, pdfH, 'F');
-
                 pdf.addImage(imgData, 'PNG', marginX, marginY, renderW, renderH);
 
                 const fileName = `RPM-${inv.id}.pdf`;
                 const pdfBlob = pdf.output('blob');
                 const pdfFile = new File([pdfBlob], fileName, { type: 'application/pdf' });
 
+                const cleanPhone = (inv.customerPhone || '').replace(/\D/g, '');
+                const fullPhone = cleanPhone.startsWith('968') ? cleanPhone : (cleanPhone ? '968' + cleanPhone : '');
+
+                if (cleanPhone && navigator.clipboard) {
+                    try {
+                        await navigator.clipboard.writeText(cleanPhone);
+                    } catch (e) {}
+                }
+
+                const shareText = fullPhone
+                    ? `فاتورة طلبك من متجر ار بي ام | RPM STORE (#${inv.id}) - رقم العميل: ${cleanPhone}`
+                    : `فاتورة طلبك من متجر ار بي ام | RPM STORE (#${inv.id})`;
+
                 if (navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
+                    if (cleanPhone) {
+                        showToast(`تم نسخ رقم العميل (${cleanPhone}) • الصقه في بحث الواتساب`);
+                    }
                     await navigator.share({
                         files: [pdfFile],
                         title: `فاتورة متجر RPM رقم #${inv.id}`,
-                        text: `فاتورة طلبك من متجر ار بي ام | RPM STORE (#${inv.id})`
+                        text: shareText
                     });
-                    showToast('تم فتح قائمة مشاركة ملف الـ PDF');
                 } else {
                     pdf.save(fileName);
-                    showToast('تم حفظ ملف الفاتورة PDF بنجاح');
+                    if (fullPhone) {
+                        showToast('تم تنزيل الفاتورة PDF وجاري فتح محادثة العميل...');
+                        setTimeout(() => {
+                            window.open(`https://wa.me/${fullPhone}?text=${encodeURIComponent(shareText)}`, '_blank');
+                        }, 600);
+                    } else {
+                        showToast('تم حفظ ملف الفاتورة PDF بنجاح');
+                    }
                 }
             } catch (err) {
                 if (err && err.name !== 'AbortError') {
