@@ -10,8 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
     <!-- FontAwesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Modern html-to-image + jsPDF (Fixes iOS Safari RTL & Cropping Bugs) -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.min.js"></script>
+    <!-- jsPDF for Direct PDF Generation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
     <script>
@@ -1702,7 +1701,6 @@
                 }
             });
 
-            // Use western numerals for date/time so PDF renders cleanly on all devices
             const now = new Date();
             const dateStr = `${now.getFullYear()}/${String(now.getMonth() + 1).padStart(2, '0')}/${String(now.getDate()).padStart(2, '0')}`;
             const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true }).replace('AM', 'ص').replace('PM', 'م');
@@ -1746,96 +1744,89 @@
         }
 
 
-        // ==================== FLAWLESS RTL PDF & NATIVE SHARE ENGINE ====================
+        // ==================== FLAWLESS RTL PDF & NATIVE CANVAS ENGINE ====================
         function buildPrintableInvoiceHTML(inv) {
             const rowsHtml = inv.items.map((item, idx) => `
                 <tr style="border-bottom: 1px solid #E5E7EB;">
-                    <td style="padding: 12px 10px; text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #6B7280;">${idx + 1}</td>
-                    <td style="padding: 12px 10px; text-align: right; font-weight: 700; font-size: 14px; color: #111827;">
+                    <td style="padding: 10px 8px; text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #6B7280;">${idx + 1}</td>
+                    <td style="padding: 10px 8px; text-align: right; font-weight: 700; font-size: 13px; color: #111827;">
                         <div>${escapeHtml(item.name)}</div>
-                        ${item.sku ? `<div style="font-size: 11px; color: #6B7280; font-family: 'JetBrains Mono', monospace; margin-top: 2px;">${escapeHtml(item.sku)}</div>` : ''}
+                        ${item.sku ? `<div style="font-size: 10px; color: #6B7280; font-family: 'JetBrains Mono', monospace; margin-top: 2px;">${escapeHtml(item.sku)}</div>` : ''}
                     </td>
-                    <td style="padding: 12px 10px; text-align: center; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 14px; color: #111827;">${item.qty}</td>
-                    <td style="padding: 12px 10px; text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #374151;" dir="ltr">${formatOMR(item.price)}</td>
-                    <td style="padding: 12px 10px; text-align: left; font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 14px; color: #111827;" dir="ltr">${formatOMR(item.price * item.qty)} OMR</td>
+                    <td style="padding: 10px 8px; text-align: center; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 13px; color: #111827;">${item.qty}</td>
+                    <td style="padding: 10px 8px; text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #374151;" dir="ltr">${formatOMR(item.price)}</td>
+                    <td style="padding: 10px 8px; text-align: left; font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 13px; color: #111827;" dir="ltr">${formatOMR(item.price * item.qty)} ر.ع</td>
                 </tr>
             `).join('');
 
             return `
-                <div dir="rtl" style="font-family: 'Tajawal', sans-serif; direction: rtl; text-align: right; color: #111827; background: #FFFFFF; width: 100%; max-width: 720px; margin: 0 auto; padding: 32px; border: 1px solid #E5E7EB; border-radius: 16px; box-sizing: border-box;">
-                    <!-- Header -->
-                    <table style="width: 100%; border-bottom: 2px solid #111827; padding-bottom: 16px; margin-bottom: 20px;">
+                <div dir="rtl" style="font-family: 'Tajawal', sans-serif; direction: rtl; text-align: right; color: #111827; background: #FFFFFF; width: 100%; max-width: 680px; margin: 0 auto; padding: 24px; border: 1px solid #E5E7EB; border-radius: 14px; box-sizing: border-box;">
+                    <table style="width: 100%; border-bottom: 2px solid #111827; padding-bottom: 14px; margin-bottom: 16px;">
                         <tr>
                             <td style="text-align: right; vertical-align: top;">
-                                <div style="display: inline-block; background: #111827; color: #F59E0B; font-weight: 900; padding: 4px 12px; border-radius: 8px; font-size: 13px; margin-bottom: 6px; font-family: 'JetBrains Mono', monospace;">RPM STORE</div>
-                                <div style="font-size: 20px; font-weight: 900; color: #111827;">متجر ار بي ام لإكسسوارات وأجهزة السيارات</div>
-                                <div style="font-size: 12px; color: #4B5563; margin-top: 4px;">سلطنة عُمان • فاتورة مبيعات إلكترونية معتمدة</div>
+                                <div style="display: inline-block; background: #111827; color: #F59E0B; font-weight: 900; padding: 3px 10px; border-radius: 6px; font-size: 12px; margin-bottom: 5px; font-family: 'JetBrains Mono', monospace;">RPM STORE</div>
+                                <div style="font-size: 18px; font-weight: 900; color: #111827;">متجر ار بي ام لإكسسوارات وأجهزة السيارات</div>
+                                <div style="font-size: 12px; color: #4B5563; margin-top: 3px;">سلطنة عُمان • فاتورة مبيعات إلكترونية معتمدة</div>
                             </td>
                             <td style="text-align: left; vertical-align: top;">
                                 <div style="font-size: 11px; color: #6B7280; font-weight: 700;">رقم الفاتورة</div>
-                                <div style="font-family: 'JetBrains Mono', monospace; font-size: 18px; font-weight: 900; color: #D97706;" dir="ltr">#${escapeHtml(inv.id)}</div>
-                                <div style="font-size: 12px; color: #4B5563; margin-top: 4px;" dir="ltr">${escapeHtml(inv.dateFormatted)}</div>
+                                <div style="font-family: 'JetBrains Mono', monospace; font-size: 17px; font-weight: 900; color: #D97706;" dir="ltr">#${escapeHtml(inv.id)}</div>
+                                <div style="font-size: 11px; color: #4B5563; margin-top: 3px;" dir="ltr">${escapeHtml(inv.dateFormatted)}</div>
                             </td>
                         </tr>
                     </table>
 
-                    <!-- Customer Info Box -->
-                    <table style="width: 100%; background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 12px; padding: 14px; margin-bottom: 22px;">
+                    <table style="width: 100%; background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 10px; margin-bottom: 18px;">
                         <tr>
-                            <td style="padding: 12px 16px; text-align: right; width: 50%; vertical-align: top;">
+                            <td style="padding: 10px 14px; text-align: right; width: 50%; vertical-align: top;">
                                 <div style="color: #6B7280; font-size: 11px; font-weight: 700;">بيانات العميل:</div>
-                                <div style="font-weight: 800; font-size: 14px; color: #111827; margin-top: 4px;">${escapeHtml(inv.customerName)}</div>
-                                ${inv.customerPhone ? `<div style="font-size: 12px; color: #374151; margin-top: 2px;">رقم الهاتف: <span style="font-family: 'JetBrains Mono', monospace; font-weight: 700;" dir="ltr">${escapeHtml(inv.customerPhone)}</span></div>` : ''}
+                                <div style="font-weight: 800; font-size: 13px; color: #111827; margin-top: 3px;">${escapeHtml(inv.customerName)}</div>
+                                ${inv.customerPhone ? `<div style="font-size: 12px; color: #374151; margin-top: 2px;">الهاتف: <span style="font-family: 'JetBrains Mono', monospace; font-weight: 700;" dir="ltr">${escapeHtml(inv.customerPhone)}</span></div>` : ''}
                             </td>
-                            <td style="padding: 12px 16px; text-align: left; width: 50%; vertical-align: top;">
+                            <td style="padding: 10px 14px; text-align: left; width: 50%; vertical-align: top;">
                                 <div style="color: #6B7280; font-size: 11px; font-weight: 700;">التوصيل وطريقة الدفع:</div>
-                                <div style="font-weight: 800; font-size: 14px; color: #111827; margin-top: 4px;">${escapeHtml(inv.governorate)}</div>
-                                <div style="font-size: 12px; color: #374151; margin-top: 2px;">${escapeHtml(inv.paymentMethod || 'تحويل بنكي')}</div>
+                                <div style="font-weight: 800; font-size: 13px; color: #111827; margin-top: 3px;">${escapeHtml(inv.governorate)}</div>
+                                <div style="font-size: 11px; color: #374151; margin-top: 2px;">${escapeHtml(inv.paymentMethod || 'تحويل بنكي')}</div>
                             </td>
                         </tr>
                     </table>
 
-                    <!-- Items Table -->
-                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 24px;">
+                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 18px;">
                         <thead>
                             <tr style="background: #111827; color: #FFFFFF; font-size: 12px;">
-                                <th style="padding: 10px; text-align: center; width: 8%;">#</th>
-                                <th style="padding: 10px; text-align: right; width: 46%;">البيان / الصنف</th>
-                                <th style="padding: 10px; text-align: center; width: 12%;">الكمية</th>
-                                <th style="padding: 10px; text-align: center; width: 16%;">سعر الوحدة</th>
-                                <th style="padding: 10px; text-align: left; width: 18%;">الإجمالي</th>
+                                <th style="padding: 9px 6px; text-align: center; width: 8%;">#</th>
+                                <th style="padding: 9px 8px; text-align: right; width: 46%;">البيان / الصنف</th>
+                                <th style="padding: 9px 6px; text-align: center; width: 12%;">الكمية</th>
+                                <th style="padding: 9px 6px; text-align: center; width: 16%;">سعر الوحدة</th>
+                                <th style="padding: 9px 8px; text-align: left; width: 18%;">الإجمالي</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            ${rowsHtml}
-                        </tbody>
+                        <tbody>${rowsHtml}</tbody>
                     </table>
 
-                    <!-- Summary Totals -->
-                    <table style="width: 100%; margin-bottom: 24px;">
+                    <table style="width: 100%; margin-bottom: 16px;">
                         <tr>
                             <td style="width: 45%;"></td>
-                            <td style="width: 55%; background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 12px; padding: 16px;">
-                                <table style="width: 100%; font-size: 13px;">
+                            <td style="width: 55%; background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 10px; padding: 12px 14px;">
+                                <table style="width: 100%; font-size: 12px;">
                                     <tr>
-                                        <td style="padding: 4px 0; color: #4B5563; text-align: right;">مجموع الأصناف:</td>
-                                        <td style="padding: 4px 0; font-family: 'JetBrains Mono', monospace; font-weight: 700; color: #111827; text-align: left;" dir="ltr">${formatOMR(inv.subtotal)} ر.ع</td>
+                                        <td style="padding: 3px 0; color: #4B5563; text-align: right;">مجموع الأصناف:</td>
+                                        <td style="padding: 3px 0; font-family: 'JetBrains Mono', monospace; font-weight: 700; color: #111827; text-align: left;" dir="ltr">${formatOMR(inv.subtotal)} ر.ع</td>
                                     </tr>
                                     <tr>
-                                        <td style="padding: 4px 0 10px 0; color: #4B5563; text-align: right;">رسوم التوصيل:</td>
-                                        <td style="padding: 4px 0 10px 0; font-family: 'JetBrains Mono', monospace; font-weight: 700; color: #111827; text-align: left;" dir="ltr">${formatOMR(inv.deliveryFee)} ر.ع</td>
+                                        <td style="padding: 3px 0 8px 0; color: #4B5563; text-align: right;">رسوم التوصيل:</td>
+                                        <td style="padding: 3px 0 8px 0; font-family: 'JetBrains Mono', monospace; font-weight: 700; color: #111827; text-align: left;" dir="ltr">${formatOMR(inv.deliveryFee)} ر.ع</td>
                                     </tr>
                                     <tr style="border-top: 2px solid #111827;">
-                                        <td style="padding-top: 10px; font-size: 15px; font-weight: 900; color: #111827; text-align: right;">الإجمالي النهائي:</td>
-                                        <td style="padding-top: 10px; font-size: 16px; font-weight: 900; font-family: 'JetBrains Mono', monospace; color: #D97706; text-align: left;" dir="ltr">${formatOMR(inv.total)} ر.ع</td>
+                                        <td style="padding-top: 8px; font-size: 14px; font-weight: 900; color: #111827; text-align: right;">الإجمالي النهائي:</td>
+                                        <td style="padding-top: 8px; font-size: 15px; font-weight: 900; font-family: 'JetBrains Mono', monospace; color: #D97706; text-align: left;" dir="ltr">${formatOMR(inv.total)} ر.ع</td>
                                     </tr>
                                 </table>
                             </td>
                         </tr>
                     </table>
 
-                    <!-- Footer -->
-                    <div style="text-align: center; border-top: 1px dashed #D1D5DB; padding-top: 16px; font-size: 12px; color: #6B7280; font-weight: 700;">
+                    <div style="text-align: center; border-top: 1px dashed #D1D5DB; padding-top: 12px; font-size: 11px; color: #6B7280; font-weight: 700;">
                         شكراً لتسوقكم من متجر ار بي ام (RPM STORE) • سلطنة عُمان
                     </div>
                 </div>
@@ -1888,7 +1879,7 @@
             }, 60);
         }
 
-        // Option 2: Uncropped Full-Height PDF Generator + Native iOS WhatsApp File Share
+        // Option 2: Direct Canvas 2D PDF Engine (Uncropped 100% on iPhone Safari + Native Share)
         async function shareOrDownloadInvoicePDF() {
             if (!currentPreviewInvoice) return;
             const inv = currentPreviewInvoice;
@@ -1900,52 +1891,319 @@
                 btn.disabled = true;
             }
 
-            // Create an uncropped offscreen render container
-            const renderBox = document.createElement('div');
-            renderBox.style.position = 'fixed';
-            renderBox.style.top = '0';
-            renderBox.style.left = '-9999px';
-            renderBox.style.width = '760px';
-            renderBox.style.background = '#FFFFFF';
-            renderBox.style.padding = '20px';
-            renderBox.style.zIndex = '-1';
-            renderBox.innerHTML = buildPrintableInvoiceHTML(inv);
-            document.body.appendChild(renderBox);
-
             try {
-                // Wait briefly for fonts & layout to settle
-                await new Promise(r => setTimeout(r, 150));
+                if (document.fonts && document.fonts.ready) {
+                    await document.fonts.ready;
+                }
 
-                const targetEl = renderBox.firstElementChild;
-                const fullWidth = targetEl.offsetWidth || 720;
-                const fullHeight = targetEl.offsetHeight || 900;
+                const scale = 2; // Retina High-DPI
+                const W = 800;
+                const pad = 45;
+                const contentW = W - (pad * 2);
 
-                // htmlToImage uses SVG foreignObject, preserving Safari's native Arabic shaping without cropping
-                const dataUrl = await htmlToImage.toPng(targetEl, {
-                    quality: 1.0,
-                    pixelRatio: 2,
-                    backgroundColor: '#FFFFFF',
-                    width: fullWidth,
-                    height: fullHeight
+                function wrapText(ctx, text, maxWidth) {
+                    const words = String(text || '').split(' ');
+                    const lines = [];
+                    let current = words[0] || '';
+                    for (let i = 1; i < words.length; i++) {
+                        const test = current + ' ' + words[i];
+                        if (ctx.measureText(test).width <= maxWidth) {
+                            current = test;
+                        } else {
+                            lines.push(current);
+                            current = words[i];
+                        }
+                    }
+                    lines.push(current);
+                    return lines;
+                }
+
+                const tempCanvas = document.createElement('canvas');
+                const tempCtx = tempCanvas.getContext('2d');
+                tempCtx.font = '700 15px Tajawal, sans-serif';
+
+                const preparedItems = inv.items.map((item, idx) => {
+                    const nameLines = wrapText(tempCtx, item.name, 330);
+                    const rowH = Math.max(54, (nameLines.length * 22) + (item.sku ? 26 : 16));
+                    return { ...item, idx: idx + 1, nameLines, rowH };
                 });
 
+                const itemsTotalH = preparedItems.reduce((sum, i) => sum + i.rowH, 0);
+                const H = 340 + itemsTotalH + 250;
+
+                const canvas = document.createElement('canvas');
+                canvas.width = W * scale;
+                canvas.height = H * scale;
+                const ctx = canvas.getContext('2d');
+                ctx.scale(scale, scale);
+
+                // White Page Surface
+                ctx.fillStyle = '#FFFFFF';
+                ctx.fillRect(0, 0, W, H);
+
+                // Outer Border
+                ctx.strokeStyle = '#E5E7EB';
+                ctx.lineWidth = 1.5;
+                ctx.strokeRect(20, 20, W - 40, H - 40);
+
+                let y = 55;
+
+                // RPM STORE Badge (Right)
+                ctx.fillStyle = '#111827';
+                ctx.beginPath();
+                ctx.roundRect(W - pad - 105, y - 5, 105, 28, 6);
+                ctx.fill();
+
+                ctx.direction = 'ltr';
+                ctx.textAlign = 'center';
+                ctx.fillStyle = '#F59E0B';
+                ctx.font = '900 13px "JetBrains Mono", monospace';
+                ctx.fillText('RPM STORE', W - pad - 52.5, y + 14);
+
+                // Store Title (Right)
+                ctx.direction = 'rtl';
+                ctx.textAlign = 'right';
+                ctx.fillStyle = '#111827';
+                ctx.font = '900 22px Tajawal, sans-serif';
+                ctx.fillText('متجر ار بي ام لإكسسوارات وأجهزة السيارات', W - pad, y + 52);
+
+                ctx.fillStyle = '#4B5563';
+                ctx.font = '700 13px Tajawal, sans-serif';
+                ctx.fillText('سلطنة عُمان • فاتورة مبيعات إلكترونية معتمدة', W - pad, y + 76);
+
+                // Invoice ID & Date (Left)
+                ctx.direction = 'rtl';
+                ctx.textAlign = 'left';
+                ctx.fillStyle = '#6B7280';
+                ctx.font = '700 12px Tajawal, sans-serif';
+                ctx.fillText('رقم الفاتورة', pad, y + 12);
+
+                ctx.direction = 'ltr';
+                ctx.textAlign = 'left';
+                ctx.fillStyle = '#D97706';
+                ctx.font = '900 22px "JetBrains Mono", monospace';
+                ctx.fillText(`#${inv.id}`, pad, y + 40);
+
+                ctx.direction = 'rtl';
+                ctx.textAlign = 'left';
+                ctx.fillStyle = '#4B5563';
+                ctx.font = '700 12px Tajawal, sans-serif';
+                ctx.fillText(inv.dateFormatted, pad, y + 66);
+
+                y += 98;
+
+                // Header Divider Line
+                ctx.strokeStyle = '#111827';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(pad, y);
+                ctx.lineTo(W - pad, y);
+                ctx.stroke();
+
+                y += 20;
+
+                // Customer & Delivery Box
+                ctx.fillStyle = '#F9FAFB';
+                ctx.strokeStyle = '#E5E7EB';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.roundRect(pad, y, contentW, 88, 10);
+                ctx.fill();
+                ctx.stroke();
+
+                // Customer Info (Right)
+                ctx.direction = 'rtl';
+                ctx.textAlign = 'right';
+                ctx.fillStyle = '#6B7280';
+                ctx.font = '700 12px Tajawal, sans-serif';
+                ctx.fillText('بيانات العميل:', W - pad - 18, y + 25);
+
+                ctx.fillStyle = '#111827';
+                ctx.font = '800 15px Tajawal, sans-serif';
+                ctx.fillText(inv.customerName || 'عميل متجر RPM', W - pad - 18, y + 50);
+
+                if (inv.customerPhone) {
+                    ctx.fillStyle = '#374151';
+                    ctx.font = '700 13px Tajawal, sans-serif';
+                    ctx.fillText(`الهاتف: ${inv.customerPhone}`, W - pad - 18, y + 73);
+                }
+
+                // Governorate & Payment (Left)
+                ctx.direction = 'rtl';
+                ctx.textAlign = 'left';
+                ctx.fillStyle = '#6B7280';
+                ctx.font = '700 12px Tajawal, sans-serif';
+                ctx.fillText('التوصيل وطريقة الدفع:', pad + 18, y + 25);
+
+                ctx.fillStyle = '#111827';
+                ctx.font = '800 15px Tajawal, sans-serif';
+                ctx.fillText(inv.governorate, pad + 18, y + 50);
+
+                ctx.fillStyle = '#374151';
+                ctx.font = '700 12px Tajawal, sans-serif';
+                ctx.fillText(inv.paymentMethod || 'تحويل بنكي', pad + 18, y + 73);
+
+                y += 108;
+
+                // Table Header Bar
+                ctx.fillStyle = '#111827';
+                ctx.beginPath();
+                ctx.roundRect(pad, y, contentW, 40, 8);
+                ctx.fill();
+
+                ctx.fillStyle = '#FFFFFF';
+                ctx.font = '800 13px Tajawal, sans-serif';
+
+                const colIdxX = W - pad - 25;
+                const colNameX = W - pad - 60;
+                const colQtyX = pad + 260;
+                const colPriceX = pad + 165;
+                const colTotalX = pad + 16;
+
+                ctx.direction = 'rtl';
+                ctx.textAlign = 'center';
+                ctx.fillText('#', colIdxX, y + 25);
+
+                ctx.textAlign = 'right';
+                ctx.fillText('البيان / الصنف', colNameX, y + 25);
+
+                ctx.textAlign = 'center';
+                ctx.fillText('الكمية', colQtyX, y + 25);
+                ctx.fillText('سعر الوحدة', colPriceX, y + 25);
+
+                ctx.textAlign = 'left';
+                ctx.fillText('الإجمالي', colTotalX, y + 25);
+
+                y += 40;
+
+                // Table Item Rows
+                preparedItems.forEach(item => {
+                    ctx.strokeStyle = '#E5E7EB';
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.moveTo(pad, y + item.rowH);
+                    ctx.lineTo(W - pad, y + item.rowH);
+                    ctx.stroke();
+
+                    ctx.direction = 'ltr';
+                    ctx.textAlign = 'center';
+                    ctx.fillStyle = '#6B7280';
+                    ctx.font = '700 13px "JetBrains Mono", monospace';
+                    ctx.fillText(String(item.idx), colIdxX, y + 28);
+
+                    ctx.direction = 'rtl';
+                    ctx.textAlign = 'right';
+                    ctx.fillStyle = '#111827';
+                    ctx.font = '800 14px Tajawal, sans-serif';
+                    item.nameLines.forEach((line, lIdx) => {
+                        ctx.fillText(line, colNameX, y + 24 + (lIdx * 21));
+                    });
+
+                    if (item.sku) {
+                        ctx.direction = 'ltr';
+                        ctx.textAlign = 'right';
+                        ctx.fillStyle = '#6B7280';
+                        ctx.font = '700 11px "JetBrains Mono", monospace';
+                        ctx.fillText(item.sku, colNameX, y + 24 + (item.nameLines.length * 21));
+                    }
+
+                    ctx.direction = 'ltr';
+                    ctx.textAlign = 'center';
+                    ctx.fillStyle = '#111827';
+                    ctx.font = '800 14px "JetBrains Mono", monospace';
+                    ctx.fillText(String(item.qty), colQtyX, y + 28);
+
+                    ctx.fillStyle = '#374151';
+                    ctx.font = '700 13px "JetBrains Mono", monospace';
+                    ctx.fillText(formatOMR(item.price), colPriceX, y + 28);
+
+                    ctx.textAlign = 'left';
+                    ctx.fillStyle = '#111827';
+                    ctx.font = '800 14px "JetBrains Mono", monospace';
+                    ctx.fillText(`${formatOMR(item.price * item.qty)} OMR`, colTotalX, y + 28);
+
+                    y += item.rowH;
+                });
+
+                y += 24;
+
+                // Summary Totals Box
+                const sumW = 310;
+                const sumX = pad;
+                ctx.fillStyle = '#F9FAFB';
+                ctx.strokeStyle = '#E5E7EB';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.roundRect(sumX, y, sumW, 118, 10);
+                ctx.fill();
+                ctx.stroke();
+
+                ctx.direction = 'rtl';
+                ctx.textAlign = 'right';
+                ctx.fillStyle = '#4B5563';
+                ctx.font = '700 13px Tajawal, sans-serif';
+                ctx.fillText('مجموع الأصناف:', sumX + sumW - 16, y + 28);
+                ctx.fillText('رسوم التوصيل:', sumX + sumW - 16, y + 56);
+
+                ctx.direction = 'ltr';
+                ctx.textAlign = 'left';
+                ctx.fillStyle = '#111827';
+                ctx.font = '700 14px "JetBrains Mono", monospace';
+                ctx.fillText(`${formatOMR(inv.subtotal)} OMR`, sumX + 16, y + 28);
+                ctx.fillText(`${formatOMR(inv.deliveryFee)} OMR`, sumX + 16, y + 56);
+
+                ctx.strokeStyle = '#111827';
+                ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.moveTo(sumX + 14, y + 72);
+                ctx.lineTo(sumX + sumW - 14, y + 72);
+                ctx.stroke();
+
+                ctx.direction = 'rtl';
+                ctx.textAlign = 'right';
+                ctx.fillStyle = '#111827';
+                ctx.font = '900 16px Tajawal, sans-serif';
+                ctx.fillText('الإجمالي النهائي:', sumX + sumW - 16, y + 99);
+
+                ctx.direction = 'ltr';
+                ctx.textAlign = 'left';
+                ctx.fillStyle = '#D97706';
+                ctx.font = '900 17px "JetBrains Mono", monospace';
+                ctx.fillText(`${formatOMR(inv.total)} OMR`, sumX + 16, y + 99);
+
+                // Footer
+                const footerY = H - 45;
+                ctx.strokeStyle = '#D1D5DB';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(pad, footerY - 22);
+                ctx.lineTo(W - pad, footerY - 22);
+                ctx.stroke();
+
+                ctx.direction = 'rtl';
+                ctx.textAlign = 'center';
+                ctx.fillStyle = '#6B7280';
+                ctx.font = '700 13px Tajawal, sans-serif';
+                ctx.fillText('شكراً لتسوقكم من متجر ار بي ام (RPM STORE) • سلطنة عُمان', W / 2, footerY);
+
+                // Export to PDF
+                const imgData = canvas.toDataURL('image/png', 1.0);
                 const { jsPDF } = window.jspdf;
-                const pdfWidthMm = 210;
-                const pdfHeightMm = Math.max(148, (fullHeight * pdfWidthMm) / fullWidth);
+                const pdfW = 210;
+                const pdfH = Math.round((H * pdfW) / W);
 
                 const pdf = new jsPDF({
                     orientation: 'p',
                     unit: 'mm',
-                    format: [pdfWidthMm, pdfHeightMm]
+                    format: [pdfW, pdfH]
                 });
 
-                pdf.addImage(dataUrl, 'PNG', 0, 0, pdfWidthMm, pdfHeightMm);
+                pdf.addImage(imgData, 'PNG', 0, 0, pdfW, pdfH);
 
                 const fileName = `RPM-${inv.id}.pdf`;
                 const pdfBlob = pdf.output('blob');
                 const pdfFile = new File([pdfBlob], fileName, { type: 'application/pdf' });
 
-                // If on iPhone / Mobile supporting Web Share API for files -> Opens WhatsApp share sheet directly!
                 if (navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
                     await navigator.share({
                         files: [pdfFile],
@@ -1958,14 +2216,10 @@
                     showToast('تم حفظ ملف الفاتورة PDF بنجاح');
                 }
             } catch (err) {
-                // User cancelled share or fallback needed
                 if (err && err.name !== 'AbortError') {
                     printInvoiceAsPDF();
                 }
             } finally {
-                if (document.body.contains(renderBox)) {
-                    document.body.removeChild(renderBox);
-                }
                 if (btn) {
                     btn.innerHTML = origHtml;
                     btn.disabled = false;
