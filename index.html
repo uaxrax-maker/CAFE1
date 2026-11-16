@@ -3,7 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>متجر ار بي ام | RPM STORE - نظام الكاشير والمخزون الاحترافي</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>متجر ار بي ام | RPM STORE - نظام الكاشير والمخزون الاحترافي v7</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts: Tajawal & JetBrains Mono -->
@@ -164,8 +167,8 @@
                 <div class="truncate">
                     <div class="flex items-center gap-2">
                         <h1 class="text-base sm:text-lg font-black text-white tracking-tight truncate">متجر ار بي ام | RPM STORE</h1>
-                        <span class="hidden sm:inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/25">
-                            <i class="fa-solid fa-shield-halved text-[10px]"></i> نظام الكاشير والمخزون
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                            v7.0 PDF Fix
                         </span>
                     </div>
                     <p class="text-[11px] sm:text-xs text-gray-400 truncate mt-0.5">
@@ -1744,7 +1747,7 @@
         }
 
 
-        // ==================== WEBKIT-PROOF RTL PDF & NATIVE CANVAS ENGINE ====================
+        // ==================== DIRECTION-AGNOSTIC CENTER-ANCHOR PDF ENGINE (v7.0) ====================
         function buildPrintableInvoiceHTML(inv) {
             const rowsHtml = inv.items.map((item, idx) => `
                 <tr style="border-bottom: 1px solid #E5E7EB;">
@@ -1761,10 +1764,10 @@
 
             return `
                 <div dir="rtl" style="font-family: 'Tajawal', sans-serif; direction: rtl; text-align: right; color: #111827; background: #FFFFFF; width: 100%; max-width: 680px; margin: 0 auto; padding: 24px; border: 1px solid #E5E7EB; border-radius: 14px; box-sizing: border-box;">
-                    <table style="width: 100%; border-bottom: 2px solid #111827; padding-bottom: 14px; margin-bottom: 16px;">
+                    <table style="width: 100%; border-bottom: 2px solid #1E293B; padding-bottom: 14px; margin-bottom: 16px;">
                         <tr>
                             <td style="text-align: right; vertical-align: top;">
-                                <div style="display: inline-block; background: #111827; color: #F59E0B; font-weight: 900; padding: 3px 10px; border-radius: 6px; font-size: 12px; margin-bottom: 5px; font-family: 'JetBrains Mono', monospace;">RPM STORE</div>
+                                <div style="display: inline-block; background: #1E293B; color: #F59E0B; font-weight: 900; padding: 3px 10px; border-radius: 6px; font-size: 12px; margin-bottom: 5px; font-family: 'JetBrains Mono', monospace;">RPM STORE</div>
                                 <div style="font-size: 18px; font-weight: 900; color: #111827;">متجر ار بي ام لإكسسوارات وأجهزة السيارات</div>
                                 <div style="font-size: 12px; color: #4B5563; margin-top: 3px;">سلطنة عُمان • فاتورة مبيعات إلكترونية معتمدة</div>
                             </td>
@@ -1776,7 +1779,7 @@
                         </tr>
                     </table>
 
-                    <table style="width: 100%; background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 10px; margin-bottom: 18px;">
+                    <table style="width: 100%; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 10px; margin-bottom: 18px;">
                         <tr>
                             <td style="padding: 10px 14px; text-align: right; width: 50%; vertical-align: top;">
                                 <div style="color: #6B7280; font-size: 11px; font-weight: 700;">بيانات العميل:</div>
@@ -1793,7 +1796,7 @@
 
                     <table style="width: 100%; border-collapse: collapse; margin-bottom: 18px;">
                         <thead>
-                            <tr style="background: #111827; color: #FFFFFF; font-size: 12px;">
+                            <tr style="background: #1E293B; color: #FFFFFF; font-size: 12px;">
                                 <th style="padding: 9px 6px; text-align: center; width: 8%;">#</th>
                                 <th style="padding: 9px 8px; text-align: right; width: 46%;">البيان / الصنف</th>
                                 <th style="padding: 9px 6px; text-align: center; width: 12%;">الكمية</th>
@@ -1807,7 +1810,7 @@
                     <table style="width: 100%; margin-bottom: 16px;">
                         <tr>
                             <td style="width: 45%;"></td>
-                            <td style="width: 55%; background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 10px; padding: 12px 14px;">
+                            <td style="width: 55%; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 10px; padding: 12px 14px;">
                                 <table style="width: 100%; font-size: 12px;">
                                     <tr>
                                         <td style="padding: 3px 0; color: #4B5563; text-align: right;">مجموع الأصناف:</td>
@@ -1817,7 +1820,7 @@
                                         <td style="padding: 3px 0 8px 0; color: #4B5563; text-align: right;">رسوم التوصيل:</td>
                                         <td style="padding: 3px 0 8px 0; font-family: 'JetBrains Mono', monospace; font-weight: 700; color: #111827; text-align: left;" dir="ltr">${formatOMR(inv.deliveryFee)} ر.ع</td>
                                     </tr>
-                                    <tr style="border-top: 2px solid #111827;">
+                                    <tr style="border-top: 2px solid #1E293B;">
                                         <td style="padding-top: 8px; font-size: 14px; font-weight: 900; color: #111827; text-align: right;">الإجمالي النهائي:</td>
                                         <td style="padding-top: 8px; font-size: 15px; font-weight: 900; font-family: 'JetBrains Mono', monospace; color: #D97706; text-align: left;" dir="ltr">${formatOMR(inv.total)} ر.ع</td>
                                     </tr>
@@ -1870,7 +1873,6 @@
             modal.classList.add('hidden');
         }
 
-        // Option 1: Native Browser Print / iOS AirPrint Save to PDF
         function printInvoiceAsPDF() {
             if (!currentPreviewInvoice) return;
             document.getElementById('dedicatedPrintSheet').innerHTML = buildPrintableInvoiceHTML(currentPreviewInvoice);
@@ -1879,7 +1881,7 @@
             }, 60);
         }
 
-        // Option 2: WebKit-Proof Canvas PDF Engine (Eliminates iOS Safari textAlign='right' clipping bug)
+        // v7.0 Center-Anchor Canvas PDF Engine: Uses ONLY textAlign='center' so iOS Safari can NEVER flip left/right!
         async function shareOrDownloadInvoicePDF() {
             if (!currentPreviewInvoice) return;
             const inv = currentPreviewInvoice;
@@ -1896,30 +1898,31 @@
                     await document.fonts.ready;
                 }
 
-                const scale = 2; // Retina High-DPI
+                const scale = 2; // High-DPI Retina
                 const W = 800;
-                const pad = 50; // Safe margin inside the 800px canvas
-                const contentW = W - (pad * 2); // 700px
+                const pad = 55; // Generous 55px safety margin on both sides
+                const contentW = W - (pad * 2); // 690px
 
-                // Universal helper functions that bypass iOS Safari's broken textAlign='right'
-                function drawRightText(ctx, str, rightEdgeX, y) {
+                // By anchoring EVERY string via its center point (textAlign = 'center'),
+                // iOS Safari's RTL/LTR direction bugs cannot shift the text by even 1 pixel!
+                function putRightAligned(ctx, str, rightEdgeX, y) {
                     const text = String(str || '');
-                    ctx.textAlign = 'left';
+                    ctx.textAlign = 'center';
                     const w = ctx.measureText(text).width;
-                    ctx.fillText(text, rightEdgeX - w, y);
+                    ctx.fillText(text, rightEdgeX - (w / 2), y);
                 }
 
-                function drawLeftText(ctx, str, leftEdgeX, y) {
+                function putLeftAligned(ctx, str, leftEdgeX, y) {
                     const text = String(str || '');
-                    ctx.textAlign = 'left';
-                    ctx.fillText(text, leftEdgeX, y);
+                    ctx.textAlign = 'center';
+                    const w = ctx.measureText(text).width;
+                    ctx.fillText(text, leftEdgeX + (w / 2), y);
                 }
 
-                function drawCenterText(ctx, str, centerX, y) {
+                function putCentered(ctx, str, centerX, y) {
                     const text = String(str || '');
-                    ctx.textAlign = 'left';
-                    const w = ctx.measureText(text).width;
-                    ctx.fillText(text, centerX - (w / 2), y);
+                    ctx.textAlign = 'center';
+                    ctx.fillText(text, centerX, y);
                 }
 
                 function wrapText(ctx, text, maxWidth) {
@@ -1939,39 +1942,33 @@
                     return lines;
                 }
 
-                function fillRoundRect(ctx, x, y, w, h, r) {
+                function fillBox(ctx, x, y, w, h, r) {
                     ctx.beginPath();
-                    if (ctx.roundRect) {
-                        ctx.roundRect(x, y, w, h, r);
-                    } else {
-                        ctx.rect(x, y, w, h);
-                    }
+                    if (ctx.roundRect) ctx.roundRect(x, y, w, h, r);
+                    else ctx.rect(x, y, w, h);
                     ctx.fill();
                 }
 
-                function strokeRoundRect(ctx, x, y, w, h, r) {
+                function strokeBox(ctx, x, y, w, h, r) {
                     ctx.beginPath();
-                    if (ctx.roundRect) {
-                        ctx.roundRect(x, y, w, h, r);
-                    } else {
-                        ctx.rect(x, y, w, h);
-                    }
+                    if (ctx.roundRect) ctx.roundRect(x, y, w, h, r);
+                    else ctx.rect(x, y, w, h);
                     ctx.stroke();
                 }
 
-                // Pre-calculate item line wraps
+                // Measure item lines
                 const tempCanvas = document.createElement('canvas');
                 const tempCtx = tempCanvas.getContext('2d');
                 tempCtx.font = '800 14px Tajawal, sans-serif';
 
                 const preparedItems = inv.items.map((item, idx) => {
-                    const nameLines = wrapText(tempCtx, item.name, 300);
+                    const nameLines = wrapText(tempCtx, item.name, 290);
                     const rowH = Math.max(54, (nameLines.length * 22) + (item.sku ? 26 : 16));
                     return { ...item, idx: idx + 1, nameLines, rowH };
                 });
 
                 const itemsTotalH = preparedItems.reduce((sum, i) => sum + i.rowH, 0);
-                const H = 350 + itemsTotalH + 250;
+                const H = 360 + itemsTotalH + 250;
 
                 const canvas = document.createElement('canvas');
                 canvas.width = W * scale;
@@ -1979,159 +1976,160 @@
                 const ctx = canvas.getContext('2d');
                 ctx.scale(scale, scale);
 
-                // 1. White Page Surface
+                // 1. Pure White Background
                 ctx.fillStyle = '#FFFFFF';
                 ctx.fillRect(0, 0, W, H);
 
-                // 2. Outer Card Frame
-                ctx.strokeStyle = '#E5E7EB';
-                ctx.lineWidth = 1.5;
-                strokeRoundRect(ctx, 24, 24, W - 48, H - 48, 14);
+                // 2. Top Gold Accent Bar & Outer Frame
+                ctx.fillStyle = '#F59E0B';
+                fillBox(ctx, 28, 24, W - 56, 6, 3);
 
-                let y = 58;
-                const rightMarginX = W - pad; // 750
-                const leftMarginX = pad;      // 50
+                ctx.strokeStyle = '#CBD5E1';
+                ctx.lineWidth = 1.5;
+                strokeBox(ctx, 28, 24, W - 56, H - 48, 12);
+
+                let y = 62;
+                const rightX = W - pad; // 745
+                const leftX = pad;      // 55
 
                 // 3. RPM STORE Badge (Top Right)
-                const badgeW = 110;
-                ctx.fillStyle = '#111827';
-                fillRoundRect(ctx, rightMarginX - badgeW, y - 4, badgeW, 28, 6);
+                const badgeW = 112;
+                ctx.fillStyle = '#1E293B';
+                fillBox(ctx, rightX - badgeW, y - 4, badgeW, 28, 6);
 
                 ctx.fillStyle = '#F59E0B';
                 ctx.font = '900 13px "JetBrains Mono", monospace';
-                drawCenterText(ctx, 'RPM STORE', rightMarginX - (badgeW / 2), y + 15);
+                putCentered(ctx, 'RPM STORE', rightX - (badgeW / 2), y + 15);
 
                 // Store Title & Subtitle (Top Right)
-                ctx.fillStyle = '#111827';
+                ctx.fillStyle = '#0F172A';
                 ctx.font = '900 20px Tajawal, sans-serif';
-                drawRightText(ctx, 'متجر ار بي ام لإكسسوارات وأجهزة السيارات', rightMarginX, y + 50);
+                putRightAligned(ctx, 'متجر ار بي ام لإكسسوارات وأجهزة السيارات', rightX, y + 50);
 
-                ctx.fillStyle = '#4B5563';
+                ctx.fillStyle = '#475569';
                 ctx.font = '700 13px Tajawal, sans-serif';
-                drawRightText(ctx, 'سلطنة عُمان • فاتورة مبيعات إلكترونية معتمدة', rightMarginX, y + 74);
+                putRightAligned(ctx, 'سلطنة عُمان • فاتورة مبيعات إلكترونية معتمدة', rightX, y + 74);
 
                 // Invoice ID & Date (Top Left)
-                ctx.fillStyle = '#6B7280';
+                ctx.fillStyle = '#64748B';
                 ctx.font = '700 12px Tajawal, sans-serif';
-                drawLeftText(ctx, 'رقم الفاتورة', leftMarginX, y + 12);
+                putLeftAligned(ctx, 'رقم الفاتورة', leftX, y + 12);
 
                 ctx.fillStyle = '#D97706';
                 ctx.font = '900 21px "JetBrains Mono", monospace';
-                drawLeftText(ctx, `#${inv.id}`, leftMarginX, y + 40);
+                putLeftAligned(ctx, `#${inv.id}`, leftX, y + 40);
 
-                ctx.fillStyle = '#4B5563';
+                ctx.fillStyle = '#475569';
                 ctx.font = '700 12px Tajawal, sans-serif';
-                drawLeftText(ctx, inv.dateFormatted, leftMarginX, y + 66);
+                putLeftAligned(ctx, inv.dateFormatted, leftX, y + 66);
 
                 y += 96;
 
-                // Header Divider Line
-                ctx.strokeStyle = '#111827';
+                // Divider Line
+                ctx.strokeStyle = '#1E293B';
                 ctx.lineWidth = 2;
                 ctx.beginPath();
-                ctx.moveTo(leftMarginX, y);
-                ctx.lineTo(rightMarginX, y);
+                ctx.moveTo(leftX, y);
+                ctx.lineTo(rightX, y);
                 ctx.stroke();
 
                 y += 20;
 
                 // 4. Customer & Delivery Box
-                ctx.fillStyle = '#F9FAFB';
-                ctx.strokeStyle = '#E5E7EB';
+                ctx.fillStyle = '#F8FAFC';
+                ctx.strokeStyle = '#E2E8F0';
                 ctx.lineWidth = 1;
-                fillRoundRect(ctx, leftMarginX, y, contentW, 88, 10);
-                strokeRoundRect(ctx, leftMarginX, y, contentW, 88, 10);
+                fillBox(ctx, leftX, y, contentW, 88, 10);
+                strokeBox(ctx, leftX, y, contentW, 88, 10);
 
-                // Customer Info (Right inside box)
-                const boxRightX = rightMarginX - 18;
-                const boxLeftX = leftMarginX + 18;
+                const boxRightX = rightX - 18;
+                const boxLeftX = leftX + 18;
 
-                ctx.fillStyle = '#6B7280';
+                ctx.fillStyle = '#64748B';
                 ctx.font = '700 12px Tajawal, sans-serif';
-                drawRightText(ctx, 'بيانات العميل:', boxRightX, y + 25);
+                putRightAligned(ctx, 'بيانات العميل:', boxRightX, y + 25);
 
-                ctx.fillStyle = '#111827';
+                ctx.fillStyle = '#0F172A';
                 ctx.font = '800 15px Tajawal, sans-serif';
-                drawRightText(ctx, inv.customerName || 'عميل متجر RPM', boxRightX, y + 50);
+                putRightAligned(ctx, inv.customerName || 'عميل متجر RPM', boxRightX, y + 50);
 
                 if (inv.customerPhone) {
-                    ctx.fillStyle = '#374151';
+                    ctx.fillStyle = '#334155';
                     ctx.font = '700 13px Tajawal, sans-serif';
-                    drawRightText(ctx, `الهاتف: ${inv.customerPhone}`, boxRightX, y + 73);
+                    putRightAligned(ctx, `الهاتف: ${inv.customerPhone}`, boxRightX, y + 73);
                 }
 
-                // Governorate & Payment (Left inside box)
-                ctx.fillStyle = '#6B7280';
+                ctx.fillStyle = '#64748B';
                 ctx.font = '700 12px Tajawal, sans-serif';
-                drawLeftText(ctx, 'التوصيل وطريقة الدفع:', boxLeftX, y + 25);
+                putLeftAligned(ctx, 'التوصيل وطريقة الدفع:', boxLeftX, y + 25);
 
-                ctx.fillStyle = '#111827';
+                ctx.fillStyle = '#0F172A';
                 ctx.font = '800 15px Tajawal, sans-serif';
-                drawLeftText(ctx, inv.governorate, boxLeftX, y + 50);
+                putLeftAligned(ctx, inv.governorate, boxLeftX, y + 50);
 
-                ctx.fillStyle = '#374151';
+                ctx.fillStyle = '#334155';
                 ctx.font = '700 12px Tajawal, sans-serif';
-                drawLeftText(ctx, inv.paymentMethod || 'تحويل بنكي', boxLeftX, y + 73);
+                putLeftAligned(ctx, inv.paymentMethod || 'تحويل بنكي', boxLeftX, y + 73);
 
                 y += 108;
 
-                // 5. Table Header Bar
-                ctx.fillStyle = '#111827';
-                fillRoundRect(ctx, leftMarginX, y, contentW, 40, 8);
+                // 5. Table Header Bar (Navy Slate + Gold Accent)
+                ctx.fillStyle = '#1E293B';
+                fillBox(ctx, leftX, y, contentW, 40, 8);
 
-                ctx.fillStyle = '#FFFFFF';
+                ctx.fillStyle = '#F8FAFC';
                 ctx.font = '800 13px Tajawal, sans-serif';
 
-                const colIdxCenter = rightMarginX - 24;   // 726
-                const colNameRight = rightMarginX - 52;   // 698
-                const colQtyCenter = leftMarginX + 255;   // 305
-                const colPriceCenter = leftMarginX + 165; // 215
-                const colTotalLeft = leftMarginX + 16;    // 66
+                const colIdxCenter = rightX - 24;   // 721
+                const colNameRight = rightX - 52;   // 693
+                const colQtyCenter = leftX + 250;   // 305
+                const colPriceCenter = leftX + 160; // 215
+                const colTotalLeft = leftX + 16;    // 71
 
-                drawCenterText(ctx, '#', colIdxCenter, y + 25);
-                drawRightText(ctx, 'البيان / الصنف', colNameRight, y + 25);
-                drawCenterText(ctx, 'الكمية', colQtyCenter, y + 25);
-                drawCenterText(ctx, 'سعر الوحدة', colPriceCenter, y + 25);
-                drawLeftText(ctx, 'الإجمالي', colTotalLeft, y + 25);
+                putCentered(ctx, '#', colIdxCenter, y + 25);
+                putRightAligned(ctx, 'البيان / الصنف', colNameRight, y + 25);
+                putCentered(ctx, 'الكمية', colQtyCenter, y + 25);
+                putCentered(ctx, 'سعر الوحدة', colPriceCenter, y + 25);
+                putLeftAligned(ctx, 'الإجمالي', colTotalLeft, y + 25);
 
                 y += 40;
 
                 // 6. Table Item Rows
                 preparedItems.forEach(item => {
-                    ctx.strokeStyle = '#E5E7EB';
+                    ctx.strokeStyle = '#E2E8F0';
                     ctx.lineWidth = 1;
                     ctx.beginPath();
-                    ctx.moveTo(leftMarginX, y + item.rowH);
-                    ctx.lineTo(rightMarginX, y + item.rowH);
+                    ctx.moveTo(leftX, y + item.rowH);
+                    ctx.lineTo(rightX, y + item.rowH);
                     ctx.stroke();
 
-                    ctx.fillStyle = '#6B7280';
+                    ctx.fillStyle = '#64748B';
                     ctx.font = '700 13px "JetBrains Mono", monospace';
-                    drawCenterText(ctx, String(item.idx), colIdxCenter, y + 28);
+                    putCentered(ctx, String(item.idx), colIdxCenter, y + 28);
 
-                    ctx.fillStyle = '#111827';
+                    ctx.fillStyle = '#0F172A';
                     ctx.font = '800 14px Tajawal, sans-serif';
                     item.nameLines.forEach((line, lIdx) => {
-                        drawRightText(ctx, line, colNameRight, y + 24 + (lIdx * 21));
+                        putRightAligned(ctx, line, colNameRight, y + 24 + (lIdx * 21));
                     });
 
                     if (item.sku) {
-                        ctx.fillStyle = '#6B7280';
+                        ctx.fillStyle = '#64748B';
                         ctx.font = '700 11px "JetBrains Mono", monospace';
-                        drawRightText(ctx, item.sku, colNameRight, y + 24 + (item.nameLines.length * 21));
+                        putRightAligned(ctx, item.sku, colNameRight, y + 24 + (item.nameLines.length * 21));
                     }
 
-                    ctx.fillStyle = '#111827';
+                    ctx.fillStyle = '#0F172A';
                     ctx.font = '800 14px "JetBrains Mono", monospace';
-                    drawCenterText(ctx, String(item.qty), colQtyCenter, y + 28);
+                    putCentered(ctx, String(item.qty), colQtyCenter, y + 28);
 
-                    ctx.fillStyle = '#374151';
+                    ctx.fillStyle = '#334155';
                     ctx.font = '700 13px "JetBrains Mono", monospace';
-                    drawCenterText(ctx, formatOMR(item.price), colPriceCenter, y + 28);
+                    putCentered(ctx, formatOMR(item.price), colPriceCenter, y + 28);
 
-                    ctx.fillStyle = '#111827';
+                    ctx.fillStyle = '#0F172A';
                     ctx.font = '800 14px "JetBrains Mono", monospace';
-                    drawLeftText(ctx, `${formatOMR(item.price * item.qty)} OMR`, colTotalLeft, y + 28);
+                    putLeftAligned(ctx, `${formatOMR(item.price * item.qty)} OMR`, colTotalLeft, y + 28);
 
                     y += item.rowH;
                 });
@@ -2140,56 +2138,56 @@
 
                 // 7. Summary Totals Box
                 const sumW = 310;
-                const sumX = leftMarginX;
-                ctx.fillStyle = '#F9FAFB';
-                ctx.strokeStyle = '#E5E7EB';
+                const sumX = leftX;
+                ctx.fillStyle = '#F8FAFC';
+                ctx.strokeStyle = '#E2E8F0';
                 ctx.lineWidth = 1;
-                fillRoundRect(ctx, sumX, y, sumW, 118, 10);
-                strokeRoundRect(ctx, sumX, y, sumW, 118, 10);
+                fillBox(ctx, sumX, y, sumW, 118, 10);
+                strokeBox(ctx, sumX, y, sumW, 118, 10);
 
-                ctx.fillStyle = '#4B5563';
+                ctx.fillStyle = '#475569';
                 ctx.font = '700 13px Tajawal, sans-serif';
-                drawRightText(ctx, 'مجموع الأصناف:', sumX + sumW - 16, y + 28);
-                drawRightText(ctx, 'رسوم التوصيل:', sumX + sumW - 16, y + 56);
+                putRightAligned(ctx, 'مجموع الأصناف:', sumX + sumW - 16, y + 28);
+                putRightAligned(ctx, 'رسوم التوصيل:', sumX + sumW - 16, y + 56);
 
-                ctx.fillStyle = '#111827';
+                ctx.fillStyle = '#0F172A';
                 ctx.font = '700 14px "JetBrains Mono", monospace';
-                drawLeftText(ctx, `${formatOMR(inv.subtotal)} OMR`, sumX + 16, y + 28);
-                drawLeftText(ctx, `${formatOMR(inv.deliveryFee)} OMR`, sumX + 16, y + 56);
+                putLeftAligned(ctx, `${formatOMR(inv.subtotal)} OMR`, sumX + 16, y + 28);
+                putLeftAligned(ctx, `${formatOMR(inv.deliveryFee)} OMR`, sumX + 16, y + 56);
 
-                ctx.strokeStyle = '#111827';
+                ctx.strokeStyle = '#1E293B';
                 ctx.lineWidth = 1.5;
                 ctx.beginPath();
                 ctx.moveTo(sumX + 14, y + 72);
                 ctx.lineTo(sumX + sumW - 14, y + 72);
                 ctx.stroke();
 
-                ctx.fillStyle = '#111827';
+                ctx.fillStyle = '#0F172A';
                 ctx.font = '900 15px Tajawal, sans-serif';
-                drawRightText(ctx, 'الإجمالي النهائي:', sumX + sumW - 16, y + 99);
+                putRightAligned(ctx, 'الإجمالي النهائي:', sumX + sumW - 16, y + 99);
 
                 ctx.fillStyle = '#D97706';
                 ctx.font = '900 17px "JetBrains Mono", monospace';
-                drawLeftText(ctx, `${formatOMR(inv.total)} OMR`, sumX + 16, y + 99);
+                putLeftAligned(ctx, `${formatOMR(inv.total)} OMR`, sumX + 16, y + 99);
 
                 // 8. Footer
                 const footerY = H - 48;
-                ctx.strokeStyle = '#D1D5DB';
+                ctx.strokeStyle = '#CBD5E1';
                 ctx.lineWidth = 1;
                 ctx.beginPath();
-                ctx.moveTo(leftMarginX, footerY - 22);
-                ctx.lineTo(rightMarginX, footerY - 22);
+                ctx.moveTo(leftX, footerY - 22);
+                ctx.lineTo(rightX, footerY - 22);
                 ctx.stroke();
 
-                ctx.fillStyle = '#6B7280';
+                ctx.fillStyle = '#64748B';
                 ctx.font = '700 13px Tajawal, sans-serif';
-                drawCenterText(ctx, 'شكراً لتسوقكم من متجر ار بي ام (RPM STORE) • سلطنة عُمان', W / 2, footerY);
+                putCentered(ctx, 'شكراً لتسوقكم من متجر ار بي ام (RPM STORE) • سلطنة عُمان', W / 2, footerY);
 
                 // 9. Export to PDF with Safe Margin
                 const imgData = canvas.toDataURL('image/png', 1.0);
                 const { jsPDF } = window.jspdf;
                 const pdfW = 210;
-                const pdfMargin = 6; // 6mm white margin around the image inside PDF
+                const pdfMargin = 6;
                 const innerW = pdfW - (pdfMargin * 2);
                 const innerH = Math.round((H * innerW) / W);
                 const pdfH = innerH + (pdfMargin * 2);
