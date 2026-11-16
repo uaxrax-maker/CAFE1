@@ -6,7 +6,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>متجر ار بي ام | RPM STORE - نظام الكاشير والمخزون الاحترافي v7</title>
+    <title>متجر ار بي ام | RPM STORE - نظام الكاشير والمخزون v8.0</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts: Tajawal & JetBrains Mono -->
@@ -167,8 +167,8 @@
                 <div class="truncate">
                     <div class="flex items-center gap-2">
                         <h1 class="text-base sm:text-lg font-black text-white tracking-tight truncate">متجر ار بي ام | RPM STORE</h1>
-                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
-                            v7.0 PDF Fix
+                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-black bg-amber-500 text-carbon-950 shadow">
+                            v8.0 PRO
                         </span>
                     </div>
                     <p class="text-[11px] sm:text-xs text-gray-400 truncate mt-0.5">
@@ -240,9 +240,9 @@
                     </div>
                 </div>
 
-                <!-- Product Categories Pills Bar (Sorted strictly by Product Type) -->
+                <!-- Product Categories Pills Bar -->
                 <div class="flex items-center gap-2 overflow-x-auto no-scrollbar pt-1" id="posCategoryPills">
-                    <!-- Populated dynamically with item counts via JS -->
+                    <!-- Populated dynamically via JS -->
                 </div>
             </div>
 
@@ -1680,7 +1680,6 @@
             document.getElementById('checkoutGrandTotal').innerText = `${formatOMR(grandTotal)} ر.ع`;
         }
 
-        // Checkout Mode: 'whatsapp_text' | 'whatsapp_pdf' | 'preview_only'
         function processCheckout(mode = 'preview_only') {
             if (cart.length === 0) {
                 showToast('أضف صنفاً واحداً على الأقل لإصدار الفاتورة', 'error');
@@ -1747,7 +1746,7 @@
         }
 
 
-        // ==================== DIRECTION-AGNOSTIC CENTER-ANCHOR PDF ENGINE (v7.0) ====================
+        // ==================== v8.0 CENTERED SYMMETRIC PDF ENGINE ====================
         function buildPrintableInvoiceHTML(inv) {
             const rowsHtml = inv.items.map((item, idx) => `
                 <tr style="border-bottom: 1px solid #E5E7EB;">
@@ -1764,30 +1763,21 @@
 
             return `
                 <div dir="rtl" style="font-family: 'Tajawal', sans-serif; direction: rtl; text-align: right; color: #111827; background: #FFFFFF; width: 100%; max-width: 680px; margin: 0 auto; padding: 24px; border: 1px solid #E5E7EB; border-radius: 14px; box-sizing: border-box;">
-                    <table style="width: 100%; border-bottom: 2px solid #1E293B; padding-bottom: 14px; margin-bottom: 16px;">
-                        <tr>
-                            <td style="text-align: right; vertical-align: top;">
-                                <div style="display: inline-block; background: #1E293B; color: #F59E0B; font-weight: 900; padding: 3px 10px; border-radius: 6px; font-size: 12px; margin-bottom: 5px; font-family: 'JetBrains Mono', monospace;">RPM STORE</div>
-                                <div style="font-size: 18px; font-weight: 900; color: #111827;">متجر ار بي ام لإكسسوارات وأجهزة السيارات</div>
-                                <div style="font-size: 12px; color: #4B5563; margin-top: 3px;">سلطنة عُمان • فاتورة مبيعات إلكترونية معتمدة</div>
-                            </td>
-                            <td style="text-align: left; vertical-align: top;">
-                                <div style="font-size: 11px; color: #6B7280; font-weight: 700;">رقم الفاتورة</div>
-                                <div style="font-family: 'JetBrains Mono', monospace; font-size: 17px; font-weight: 900; color: #D97706;" dir="ltr">#${escapeHtml(inv.id)}</div>
-                                <div style="font-size: 11px; color: #4B5563; margin-top: 3px;" dir="ltr">${escapeHtml(inv.dateFormatted)}</div>
-                            </td>
-                        </tr>
-                    </table>
+                    <div style="text-align: center; border-bottom: 2px solid #D97706; padding-bottom: 14px; margin-bottom: 16px;">
+                        <div style="display: inline-block; background: #1E293B; color: #F59E0B; font-weight: 900; padding: 3px 12px; border-radius: 6px; font-size: 12px; margin-bottom: 6px; font-family: 'JetBrains Mono', monospace;">RPM STORE</div>
+                        <div style="font-size: 19px; font-weight: 900; color: #111827;">متجر ار بي ام لإكسسوارات وأجهزة السيارات</div>
+                        <div style="font-size: 12px; color: #4B5563; margin-top: 3px;">سلطنة عُمان • فاتورة رقم #${escapeHtml(inv.id)} • ${escapeHtml(inv.dateFormatted)}</div>
+                    </div>
 
                     <table style="width: 100%; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 10px; margin-bottom: 18px;">
                         <tr>
-                            <td style="padding: 10px 14px; text-align: right; width: 50%; vertical-align: top;">
-                                <div style="color: #6B7280; font-size: 11px; font-weight: 700;">بيانات العميل:</div>
+                            <td style="padding: 10px 14px; text-align: center; width: 50%; vertical-align: top;">
+                                <div style="color: #6B7280; font-size: 11px; font-weight: 700;">بيانات العميل</div>
                                 <div style="font-weight: 800; font-size: 13px; color: #111827; margin-top: 3px;">${escapeHtml(inv.customerName)}</div>
-                                ${inv.customerPhone ? `<div style="font-size: 12px; color: #374151; margin-top: 2px;">الهاتف: <span style="font-family: 'JetBrains Mono', monospace; font-weight: 700;" dir="ltr">${escapeHtml(inv.customerPhone)}</span></div>` : ''}
+                                ${inv.customerPhone ? `<div style="font-size: 12px; color: #374151; margin-top: 2px;">${escapeHtml(inv.customerPhone)}</div>` : ''}
                             </td>
-                            <td style="padding: 10px 14px; text-align: left; width: 50%; vertical-align: top;">
-                                <div style="color: #6B7280; font-size: 11px; font-weight: 700;">التوصيل وطريقة الدفع:</div>
+                            <td style="padding: 10px 14px; text-align: center; width: 50%; vertical-align: top;">
+                                <div style="color: #6B7280; font-size: 11px; font-weight: 700;">التوصيل وطريقة الدفع</div>
                                 <div style="font-weight: 800; font-size: 13px; color: #111827; margin-top: 3px;">${escapeHtml(inv.governorate)}</div>
                                 <div style="font-size: 11px; color: #374151; margin-top: 2px;">${escapeHtml(inv.paymentMethod || 'تحويل بنكي')}</div>
                             </td>
@@ -1807,30 +1797,8 @@
                         <tbody>${rowsHtml}</tbody>
                     </table>
 
-                    <table style="width: 100%; margin-bottom: 16px;">
-                        <tr>
-                            <td style="width: 45%;"></td>
-                            <td style="width: 55%; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 10px; padding: 12px 14px;">
-                                <table style="width: 100%; font-size: 12px;">
-                                    <tr>
-                                        <td style="padding: 3px 0; color: #4B5563; text-align: right;">مجموع الأصناف:</td>
-                                        <td style="padding: 3px 0; font-family: 'JetBrains Mono', monospace; font-weight: 700; color: #111827; text-align: left;" dir="ltr">${formatOMR(inv.subtotal)} ر.ع</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="padding: 3px 0 8px 0; color: #4B5563; text-align: right;">رسوم التوصيل:</td>
-                                        <td style="padding: 3px 0 8px 0; font-family: 'JetBrains Mono', monospace; font-weight: 700; color: #111827; text-align: left;" dir="ltr">${formatOMR(inv.deliveryFee)} ر.ع</td>
-                                    </tr>
-                                    <tr style="border-top: 2px solid #1E293B;">
-                                        <td style="padding-top: 8px; font-size: 14px; font-weight: 900; color: #111827; text-align: right;">الإجمالي النهائي:</td>
-                                        <td style="padding-top: 8px; font-size: 15px; font-weight: 900; font-family: 'JetBrains Mono', monospace; color: #D97706; text-align: left;" dir="ltr">${formatOMR(inv.total)} ر.ع</td>
-                                    </tr>
-                                </table>
-                            </td>
-                        </tr>
-                    </table>
-
-                    <div style="text-align: center; border-top: 1px dashed #D1D5DB; padding-top: 12px; font-size: 11px; color: #6B7280; font-weight: 700;">
-                        شكراً لتسوقكم من متجر ار بي ام (RPM STORE) • سلطنة عُمان
+                    <div style="text-align: center; border-top: 1px dashed #D1D5DB; padding-top: 12px; font-size: 12px; color: #111827; font-weight: 800;">
+                        الإجمالي النهائي: ${formatOMR(inv.total)} ر.ع (شامل التوصيل: ${formatOMR(inv.deliveryFee)} ر.ع)
                     </div>
                 </div>
             `;
@@ -1881,7 +1849,7 @@
             }, 60);
         }
 
-        // v7.0 Center-Anchor Canvas PDF Engine: Uses ONLY textAlign='center' so iOS Safari can NEVER flip left/right!
+        // v8.0 Symmetric Center-Column Canvas PDF Generator (80px Safe Margins on Left & Right)
         async function shareOrDownloadInvoicePDF() {
             if (!currentPreviewInvoice) return;
             const inv = currentPreviewInvoice;
@@ -1898,31 +1866,15 @@
                     await document.fonts.ready;
                 }
 
-                const scale = 2; // High-DPI Retina
+                const scale = 2;
                 const W = 800;
-                const pad = 55; // Generous 55px safety margin on both sides
-                const contentW = W - (pad * 2); // 690px
+                const pad = 80; // Huge 80px safe margin on both Right and Left!
+                const boxW = W - (pad * 2); // 640px centered box
+                const centerX = W / 2;      // 400
 
-                // By anchoring EVERY string via its center point (textAlign = 'center'),
-                // iOS Safari's RTL/LTR direction bugs cannot shift the text by even 1 pixel!
-                function putRightAligned(ctx, str, rightEdgeX, y) {
-                    const text = String(str || '');
+                function drawCentered(ctx, text, cx, y) {
                     ctx.textAlign = 'center';
-                    const w = ctx.measureText(text).width;
-                    ctx.fillText(text, rightEdgeX - (w / 2), y);
-                }
-
-                function putLeftAligned(ctx, str, leftEdgeX, y) {
-                    const text = String(str || '');
-                    ctx.textAlign = 'center';
-                    const w = ctx.measureText(text).width;
-                    ctx.fillText(text, leftEdgeX + (w / 2), y);
-                }
-
-                function putCentered(ctx, str, centerX, y) {
-                    const text = String(str || '');
-                    ctx.textAlign = 'center';
-                    ctx.fillText(text, centerX, y);
+                    ctx.fillText(String(text || ''), cx, y);
                 }
 
                 function wrapText(ctx, text, maxWidth) {
@@ -1956,19 +1908,18 @@
                     ctx.stroke();
                 }
 
-                // Measure item lines
                 const tempCanvas = document.createElement('canvas');
                 const tempCtx = tempCanvas.getContext('2d');
                 tempCtx.font = '800 14px Tajawal, sans-serif';
 
                 const preparedItems = inv.items.map((item, idx) => {
-                    const nameLines = wrapText(tempCtx, item.name, 290);
-                    const rowH = Math.max(54, (nameLines.length * 22) + (item.sku ? 26 : 16));
+                    const nameLines = wrapText(tempCtx, item.name, 260);
+                    const rowH = Math.max(56, (nameLines.length * 22) + (item.sku ? 26 : 16));
                     return { ...item, idx: idx + 1, nameLines, rowH };
                 });
 
                 const itemsTotalH = preparedItems.reduce((sum, i) => sum + i.rowH, 0);
-                const H = 360 + itemsTotalH + 250;
+                const H = 380 + itemsTotalH + 240;
 
                 const canvas = document.createElement('canvas');
                 canvas.width = W * scale;
@@ -1976,221 +1927,191 @@
                 const ctx = canvas.getContext('2d');
                 ctx.scale(scale, scale);
 
-                // 1. Pure White Background
+                // 1. White Page Surface
                 ctx.fillStyle = '#FFFFFF';
                 ctx.fillRect(0, 0, W, H);
 
-                // 2. Top Gold Accent Bar & Outer Frame
-                ctx.fillStyle = '#F59E0B';
-                fillBox(ctx, 28, 24, W - 56, 6, 3);
-
+                // 2. Outer Card Border (Inside 50px margin)
                 ctx.strokeStyle = '#CBD5E1';
-                ctx.lineWidth = 1.5;
-                strokeBox(ctx, 28, 24, W - 56, H - 48, 12);
+                ctx.lineWidth = 2;
+                strokeBox(ctx, 50, 30, W - 100, H - 60, 16);
 
-                let y = 62;
-                const rightX = W - pad; // 745
-                const leftX = pad;      // 55
+                // Top Amber Accent Bar
+                ctx.fillStyle = '#F59E0B';
+                fillBox(ctx, 50, 30, W - 100, 8, 4);
 
-                // 3. RPM STORE Badge (Top Right)
-                const badgeW = 112;
+                let y = 65;
+
+                // 3. Centered Header Block (100% Immune to Right/Left Clipping)
                 ctx.fillStyle = '#1E293B';
-                fillBox(ctx, rightX - badgeW, y - 4, badgeW, 28, 6);
-
+                fillBox(ctx, centerX - 65, y, 130, 28, 8);
                 ctx.fillStyle = '#F59E0B';
                 ctx.font = '900 13px "JetBrains Mono", monospace';
-                putCentered(ctx, 'RPM STORE', rightX - (badgeW / 2), y + 15);
+                drawCentered(ctx, 'RPM STORE', centerX, y + 19);
 
-                // Store Title & Subtitle (Top Right)
+                y += 52;
                 ctx.fillStyle = '#0F172A';
-                ctx.font = '900 20px Tajawal, sans-serif';
-                putRightAligned(ctx, 'متجر ار بي ام لإكسسوارات وأجهزة السيارات', rightX, y + 50);
+                ctx.font = '900 22px Tajawal, sans-serif';
+                drawCentered(ctx, 'متجر ار بي ام لإكسسوارات وأجهزة السيارات', centerX, y);
 
+                y += 26;
                 ctx.fillStyle = '#475569';
                 ctx.font = '700 13px Tajawal, sans-serif';
-                putRightAligned(ctx, 'سلطنة عُمان • فاتورة مبيعات إلكترونية معتمدة', rightX, y + 74);
+                drawCentered(ctx, 'سلطنة عُمان • فاتورة مبيعات إلكترونية معتمدة', centerX, y);
 
-                // Invoice ID & Date (Top Left)
-                ctx.fillStyle = '#64748B';
-                ctx.font = '700 12px Tajawal, sans-serif';
-                putLeftAligned(ctx, 'رقم الفاتورة', leftX, y + 12);
+                y += 28;
+                ctx.fillStyle = '#FEF3C7';
+                ctx.strokeStyle = '#F59E0B';
+                ctx.lineWidth = 1;
+                fillBox(ctx, centerX - 150, y - 18, 300, 30, 8);
+                strokeBox(ctx, centerX - 150, y - 18, 300, 30, 8);
 
-                ctx.fillStyle = '#D97706';
-                ctx.font = '900 21px "JetBrains Mono", monospace';
-                putLeftAligned(ctx, `#${inv.id}`, leftX, y + 40);
+                ctx.fillStyle = '#B45309';
+                ctx.font = '800 13px Tajawal, sans-serif';
+                drawCentered(ctx, `فاتورة رقم: #${inv.id}  |  ${inv.dateFormatted}`, centerX, y + 2);
 
-                ctx.fillStyle = '#475569';
-                ctx.font = '700 12px Tajawal, sans-serif';
-                putLeftAligned(ctx, inv.dateFormatted, leftX, y + 66);
+                y += 32;
 
-                y += 96;
-
-                // Divider Line
-                ctx.strokeStyle = '#1E293B';
-                ctx.lineWidth = 2;
-                ctx.beginPath();
-                ctx.moveTo(leftX, y);
-                ctx.lineTo(rightX, y);
-                ctx.stroke();
-
-                y += 20;
-
-                // 4. Customer & Delivery Box
+                // 4. Two-Column Centered Customer & Delivery Box
                 ctx.fillStyle = '#F8FAFC';
                 ctx.strokeStyle = '#E2E8F0';
-                ctx.lineWidth = 1;
-                fillBox(ctx, leftX, y, contentW, 88, 10);
-                strokeBox(ctx, leftX, y, contentW, 88, 10);
+                ctx.lineWidth = 1.5;
+                fillBox(ctx, pad, y, boxW, 92, 12);
+                strokeBox(ctx, pad, y, boxW, 92, 12);
 
-                const boxRightX = rightX - 18;
-                const boxLeftX = leftX + 18;
+                // Vertical Divider in middle of box
+                ctx.beginPath();
+                ctx.moveTo(centerX, y + 12);
+                ctx.lineTo(centerX, y + 80);
+                ctx.stroke();
 
+                const rightColCenter = centerX + (boxW / 4); // 560
+                const leftColCenter = centerX - (boxW / 4);  // 240
+
+                // Customer (Right Half Center)
                 ctx.fillStyle = '#64748B';
                 ctx.font = '700 12px Tajawal, sans-serif';
-                putRightAligned(ctx, 'بيانات العميل:', boxRightX, y + 25);
+                drawCentered(ctx, 'بيانات العميل', rightColCenter, y + 24);
 
                 ctx.fillStyle = '#0F172A';
                 ctx.font = '800 15px Tajawal, sans-serif';
-                putRightAligned(ctx, inv.customerName || 'عميل متجر RPM', boxRightX, y + 50);
+                drawCentered(ctx, inv.customerName || 'عميل متجر RPM', rightColCenter, y + 48);
 
-                if (inv.customerPhone) {
-                    ctx.fillStyle = '#334155';
-                    ctx.font = '700 13px Tajawal, sans-serif';
-                    putRightAligned(ctx, `الهاتف: ${inv.customerPhone}`, boxRightX, y + 73);
-                }
+                ctx.fillStyle = '#334155';
+                ctx.font = '700 13px "JetBrains Mono", monospace';
+                drawCentered(ctx, inv.customerPhone || '-', rightColCenter, y + 72);
 
+                // Delivery (Left Half Center)
                 ctx.fillStyle = '#64748B';
                 ctx.font = '700 12px Tajawal, sans-serif';
-                putLeftAligned(ctx, 'التوصيل وطريقة الدفع:', boxLeftX, y + 25);
+                drawCentered(ctx, 'المنطقة وطريقة الدفع', leftColCenter, y + 24);
 
                 ctx.fillStyle = '#0F172A';
                 ctx.font = '800 15px Tajawal, sans-serif';
-                putLeftAligned(ctx, inv.governorate, boxLeftX, y + 50);
+                drawCentered(ctx, inv.governorate, leftColCenter, y + 48);
 
                 ctx.fillStyle = '#334155';
                 ctx.font = '700 12px Tajawal, sans-serif';
-                putLeftAligned(ctx, inv.paymentMethod || 'تحويل بنكي', boxLeftX, y + 73);
+                drawCentered(ctx, inv.paymentMethod || 'تحويل بنكي', leftColCenter, y + 72);
 
-                y += 108;
+                y += 110;
 
-                // 5. Table Header Bar (Navy Slate + Gold Accent)
+                // 5. Table Header Bar (All Columns Centered inside 640px Box)
                 ctx.fillStyle = '#1E293B';
-                fillBox(ctx, leftX, y, contentW, 40, 8);
+                fillBox(ctx, pad, y, boxW, 40, 8);
+
+                // Column Centers inside [80 .. 720]
+                const cIdx = 690;   // #
+                const cName = 530;  // الصنف
+                const cQty = 345;   // الكمية
+                const cPrice = 250; // السعر
+                const cTotal = 140; // الإجمالي
 
                 ctx.fillStyle = '#F8FAFC';
                 ctx.font = '800 13px Tajawal, sans-serif';
-
-                const colIdxCenter = rightX - 24;   // 721
-                const colNameRight = rightX - 52;   // 693
-                const colQtyCenter = leftX + 250;   // 305
-                const colPriceCenter = leftX + 160; // 215
-                const colTotalLeft = leftX + 16;    // 71
-
-                putCentered(ctx, '#', colIdxCenter, y + 25);
-                putRightAligned(ctx, 'البيان / الصنف', colNameRight, y + 25);
-                putCentered(ctx, 'الكمية', colQtyCenter, y + 25);
-                putCentered(ctx, 'سعر الوحدة', colPriceCenter, y + 25);
-                putLeftAligned(ctx, 'الإجمالي', colTotalLeft, y + 25);
+                drawCentered(ctx, '#', cIdx, y + 25);
+                drawCentered(ctx, 'البيان / الصنف', cName, y + 25);
+                drawCentered(ctx, 'الكمية', cQty, y + 25);
+                drawCentered(ctx, 'سعر الوحدة', cPrice, y + 25);
+                drawCentered(ctx, 'الإجمالي', cTotal, y + 25);
 
                 y += 40;
 
-                // 6. Table Item Rows
+                // 6. Table Rows (Every single cell is center-anchored!)
                 preparedItems.forEach(item => {
                     ctx.strokeStyle = '#E2E8F0';
                     ctx.lineWidth = 1;
                     ctx.beginPath();
-                    ctx.moveTo(leftX, y + item.rowH);
-                    ctx.lineTo(rightX, y + item.rowH);
+                    ctx.moveTo(pad, y + item.rowH);
+                    ctx.lineTo(W - pad, y + item.rowH);
                     ctx.stroke();
 
                     ctx.fillStyle = '#64748B';
                     ctx.font = '700 13px "JetBrains Mono", monospace';
-                    putCentered(ctx, String(item.idx), colIdxCenter, y + 28);
+                    drawCentered(ctx, String(item.idx), cIdx, y + 28);
 
                     ctx.fillStyle = '#0F172A';
                     ctx.font = '800 14px Tajawal, sans-serif';
                     item.nameLines.forEach((line, lIdx) => {
-                        putRightAligned(ctx, line, colNameRight, y + 24 + (lIdx * 21));
+                        drawCentered(ctx, line, cName, y + 24 + (lIdx * 21));
                     });
 
                     if (item.sku) {
                         ctx.fillStyle = '#64748B';
                         ctx.font = '700 11px "JetBrains Mono", monospace';
-                        putRightAligned(ctx, item.sku, colNameRight, y + 24 + (item.nameLines.length * 21));
+                        drawCentered(ctx, item.sku, cName, y + 24 + (item.nameLines.length * 21));
                     }
 
                     ctx.fillStyle = '#0F172A';
                     ctx.font = '800 14px "JetBrains Mono", monospace';
-                    putCentered(ctx, String(item.qty), colQtyCenter, y + 28);
+                    drawCentered(ctx, String(item.qty), cQty, y + 28);
 
                     ctx.fillStyle = '#334155';
                     ctx.font = '700 13px "JetBrains Mono", monospace';
-                    putCentered(ctx, formatOMR(item.price), colPriceCenter, y + 28);
+                    drawCentered(ctx, formatOMR(item.price), cPrice, y + 28);
 
                     ctx.fillStyle = '#0F172A';
                     ctx.font = '800 14px "JetBrains Mono", monospace';
-                    putLeftAligned(ctx, `${formatOMR(item.price * item.qty)} OMR`, colTotalLeft, y + 28);
+                    drawCentered(ctx, `${formatOMR(item.price * item.qty)} OMR`, cTotal, y + 28);
 
                     y += item.rowH;
                 });
 
                 y += 24;
 
-                // 7. Summary Totals Box
-                const sumW = 310;
-                const sumX = leftX;
+                // 7. Centered Summary Box
                 ctx.fillStyle = '#F8FAFC';
                 ctx.strokeStyle = '#E2E8F0';
-                ctx.lineWidth = 1;
-                fillBox(ctx, sumX, y, sumW, 118, 10);
-                strokeBox(ctx, sumX, y, sumW, 118, 10);
+                ctx.lineWidth = 1.5;
+                fillBox(ctx, pad, y, boxW, 110, 12);
+                strokeBox(ctx, pad, y, boxW, 110, 12);
 
                 ctx.fillStyle = '#475569';
-                ctx.font = '700 13px Tajawal, sans-serif';
-                putRightAligned(ctx, 'مجموع الأصناف:', sumX + sumW - 16, y + 28);
-                putRightAligned(ctx, 'رسوم التوصيل:', sumX + sumW - 16, y + 56);
+                ctx.font = '700 14px Tajawal, sans-serif';
+                drawCentered(ctx, `مجموع الأصناف: ${formatOMR(inv.subtotal)} ر.ع   |   رسوم التوصيل: ${formatOMR(inv.deliveryFee)} ر.ع`, centerX, y + 35);
 
-                ctx.fillStyle = '#0F172A';
-                ctx.font = '700 14px "JetBrains Mono", monospace';
-                putLeftAligned(ctx, `${formatOMR(inv.subtotal)} OMR`, sumX + 16, y + 28);
-                putLeftAligned(ctx, `${formatOMR(inv.deliveryFee)} OMR`, sumX + 16, y + 56);
-
-                ctx.strokeStyle = '#1E293B';
-                ctx.lineWidth = 1.5;
-                ctx.beginPath();
-                ctx.moveTo(sumX + 14, y + 72);
-                ctx.lineTo(sumX + sumW - 14, y + 72);
-                ctx.stroke();
-
-                ctx.fillStyle = '#0F172A';
-                ctx.font = '900 15px Tajawal, sans-serif';
-                putRightAligned(ctx, 'الإجمالي النهائي:', sumX + sumW - 16, y + 99);
-
-                ctx.fillStyle = '#D97706';
-                ctx.font = '900 17px "JetBrains Mono", monospace';
-                putLeftAligned(ctx, `${formatOMR(inv.total)} OMR`, sumX + 16, y + 99);
-
-                // 8. Footer
-                const footerY = H - 48;
                 ctx.strokeStyle = '#CBD5E1';
                 ctx.lineWidth = 1;
                 ctx.beginPath();
-                ctx.moveTo(leftX, footerY - 22);
-                ctx.lineTo(rightX, footerY - 22);
+                ctx.moveTo(pad + 40, y + 52);
+                ctx.lineTo(W - pad - 40, y + 52);
                 ctx.stroke();
 
+                ctx.fillStyle = '#D97706';
+                ctx.font = '900 19px Tajawal, sans-serif';
+                drawCentered(ctx, `الإجمالي النهائي للفاتورة: ${formatOMR(inv.total)} ر.ع`, centerX, y + 86);
+
+                // 8. Footer
+                const footerY = H - 55;
                 ctx.fillStyle = '#64748B';
                 ctx.font = '700 13px Tajawal, sans-serif';
-                putCentered(ctx, 'شكراً لتسوقكم من متجر ار بي ام (RPM STORE) • سلطنة عُمان', W / 2, footerY);
+                drawCentered(ctx, 'شكراً لتسوقكم من متجر ار بي ام (RPM STORE) • سلطنة عُمان', centerX, footerY);
 
-                // 9. Export to PDF with Safe Margin
+                // 9. Export PDF
                 const imgData = canvas.toDataURL('image/png', 1.0);
                 const { jsPDF } = window.jspdf;
                 const pdfW = 210;
-                const pdfMargin = 6;
-                const innerW = pdfW - (pdfMargin * 2);
-                const innerH = Math.round((H * innerW) / W);
-                const pdfH = innerH + (pdfMargin * 2);
+                const pdfH = Math.round((H * pdfW) / W);
 
                 const pdf = new jsPDF({
                     orientation: 'p',
@@ -2198,7 +2119,7 @@
                     format: [pdfW, pdfH]
                 });
 
-                pdf.addImage(imgData, 'PNG', pdfMargin, pdfMargin, innerW, innerH);
+                pdf.addImage(imgData, 'PNG', 0, 0, pdfW, pdfH);
 
                 const fileName = `RPM-${inv.id}.pdf`;
                 const pdfBlob = pdf.output('blob');
