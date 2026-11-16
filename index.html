@@ -10,8 +10,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
     <!-- FontAwesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- html2pdf.js for Direct PDF Download -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <!-- Modern html-to-image + jsPDF (Fixes iOS Safari RTL & Cropping Bugs) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
     <script>
         tailwind.config = {
@@ -66,7 +67,7 @@
 
         /* Luxury Surfaces & Micro-interactions */
         .glass-header {
-            background: rgba(11, 14, 20, 0.85);
+            background: rgba(11, 14, 20, 0.88);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.07);
@@ -114,14 +115,14 @@
             animation: popScale 0.22s ease-out;
         }
 
-        /* Dedicated Clean Print Layout for PDF Invoices */
+        /* Dedicated Clean Print Layout for Native Print / Save as PDF */
         #dedicatedPrintSheet {
             display: none;
         }
         @media print {
             @page {
                 size: A4 portrait;
-                margin: 12mm;
+                margin: 10mm;
             }
             html, body {
                 background: #FFFFFF !important;
@@ -130,6 +131,8 @@
                 padding: 0 !important;
                 height: auto !important;
                 overflow: visible !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
             }
             body > *:not(#dedicatedPrintSheet) {
                 display: none !important;
@@ -473,7 +476,7 @@
                             <i class="fa-solid fa-file-invoice-dollar text-amber-400"></i>
                             <span>سجل الفواتير والطلبات المنفذة</span>
                         </h3>
-                        <p class="text-xs text-gray-400">يمكنك معاينة الفاتورة، حفظها بصيغة PDF، أو إرسالها مباشرة عبر واتساب</p>
+                        <p class="text-xs text-gray-400">يمكنك إرسال الفاتورة عبر واتساب كـ (نص) أو كـ (ملف PDF) أو طباعتها مباشرة</p>
                     </div>
                     <div class="relative w-full sm:w-64">
                         <i class="fa-solid fa-magnifying-glass absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
@@ -497,7 +500,7 @@
                 <span id="mobileCartBarCount" class="w-8 h-8 rounded-xl bg-carbon-950 text-amber-400 font-black num-omr text-sm flex items-center justify-center">0</span>
                 <div>
                     <span class="font-black text-xs sm:text-sm block">إتمام الطلب وإصدار الفاتورة</span>
-                    <span class="text-[11px] font-bold opacity-80 block">اضغط لمراجعة السلة أو طباعة PDF</span>
+                    <span class="text-[11px] font-bold opacity-80 block">إرسال واتساب نصي أو ملف PDF</span>
                 </div>
             </div>
             <div class="flex items-center gap-2">
@@ -537,7 +540,7 @@
                 </div>
                 <div>
                     <h3 class="font-black text-white text-sm sm:text-base">سلة الطلب وإصدار الفاتورة</h3>
-                    <p class="text-[11px] text-gray-400">خصم آلي من المخزون + فاتورة PDF جاهزة</p>
+                    <p class="text-[11px] text-gray-400">اختر إرسال الفاتورة نصياً أو كملف PDF</p>
                 </div>
             </div>
             <button onclick="toggleCartDrawer(false)" class="w-8 h-8 rounded-lg bg-carbon-700 text-gray-400 hover:text-white flex items-center justify-center">
@@ -575,7 +578,7 @@
 
                 <div class="grid grid-cols-2 gap-2.5">
                     <div>
-                        <label class="block text-[11px] font-bold text-gray-400 mb-1">رقم هاتف العميل</label>
+                        <label class="block text-[11px] font-bold text-gray-400 mb-1">رقم واتساب العميل</label>
                         <input type="tel" id="checkoutCustomerPhone" placeholder="9xxxxxxx"
                             class="w-full bg-carbon-800 border border-white/10 focus:border-amber-500 rounded-xl px-3 py-2 text-xs text-white num-omr focus:outline-none">
                     </div>
@@ -617,8 +620,8 @@
             </div>
         </div>
 
-        <!-- Drawer Footer Totals & Actions -->
-        <div class="p-4 bg-carbon-900 border-t border-white/10 space-y-3">
+        <!-- Drawer Footer Totals & Dual Checkout Options (WhatsApp Text OR PDF) -->
+        <div class="p-4 bg-carbon-900 border-t border-white/10 space-y-2.5">
             <div class="space-y-1 text-xs">
                 <div class="flex justify-between text-gray-400">
                     <span>مجموع الأصناف:</span>
@@ -634,16 +637,21 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-2 gap-2.5">
-                <button onclick="processCheckout(false)" class="py-3 px-3 rpm-gradient hover:opacity-95 text-carbon-950 font-black rounded-xl text-xs shadow-lg flex items-center justify-center gap-1.5 transition-all active:scale-95">
-                    <i class="fa-solid fa-file-pdf text-sm"></i>
-                    <span>إصدار الفاتورة / PDF</span>
-                </button>
-                <button onclick="processCheckout(true)" class="py-3 px-3 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold rounded-xl text-xs shadow-lg shadow-emerald-600/25 flex items-center justify-center gap-1.5 transition-all active:scale-95">
+            <!-- Primary Checkout Options: WhatsApp Text OR WhatsApp PDF -->
+            <div class="grid grid-cols-2 gap-2 pt-1">
+                <button onclick="processCheckout('whatsapp_text')" class="py-3 px-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold rounded-xl text-xs shadow-lg shadow-emerald-600/25 flex items-center justify-center gap-1.5 transition-all active:scale-95">
                     <i class="fa-brands fa-whatsapp text-base"></i>
-                    <span>اعتماد وإرسال واتساب</span>
+                    <span>اعتماد وإرسال (نصي)</span>
+                </button>
+                <button onclick="processCheckout('whatsapp_pdf')" class="py-3 px-2.5 rpm-gradient hover:opacity-95 text-carbon-950 font-black rounded-xl text-xs shadow-lg shadow-amber-500/20 flex items-center justify-center gap-1.5 transition-all active:scale-95">
+                    <i class="fa-solid fa-file-pdf text-sm"></i>
+                    <span>اعتماد وإرسال (PDF)</span>
                 </button>
             </div>
+            <button onclick="processCheckout('preview_only')" class="w-full py-2 bg-carbon-700 hover:bg-carbon-600 text-gray-200 font-bold rounded-xl text-[11px] border border-white/10 flex items-center justify-center gap-1.5 transition-all">
+                <i class="fa-solid fa-receipt text-amber-400"></i>
+                <span>اعتماد ومعاينة الفاتورة فقط</span>
+            </button>
         </div>
     </aside>
 
@@ -720,22 +728,22 @@
                 </div>
             </div>
 
-            <!-- Modal Action Buttons (PDF Print, Direct PDF Download, WhatsApp) -->
+            <!-- Modal Action Buttons (WhatsApp Text, WhatsApp/Share PDF, Native Print) -->
             <div class="p-4 bg-carbon-950 border-t border-white/10 space-y-2.5">
                 <div class="grid grid-cols-2 gap-2.5">
-                    <button onclick="printInvoiceAsPDF()" class="py-2.5 px-3 rpm-gradient hover:opacity-95 text-carbon-950 font-black rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-md transition-all active:scale-95">
-                        <i class="fa-solid fa-print text-sm"></i>
-                        <span>طباعة / حفظ PDF</span>
+                    <button onclick="sendCurrentInvoiceWhatsApp()" class="py-3 px-3 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-lg transition-all active:scale-95">
+                        <i class="fa-brands fa-whatsapp text-base"></i>
+                        <span>إرسال واتساب (نصي)</span>
                     </button>
-                    <button id="btnDownloadDirectPDF" onclick="downloadInvoicePDFFile()" class="py-2.5 px-3 bg-red-600 hover:bg-red-500 text-white font-extrabold rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-md transition-all active:scale-95">
+                    <button id="btnShareOrDownloadPDF" onclick="shareOrDownloadInvoicePDF()" class="py-3 px-3 rpm-gradient hover:opacity-95 text-carbon-950 font-black rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-lg transition-all active:scale-95">
                         <i class="fa-solid fa-file-pdf text-sm"></i>
-                        <span>تنزيل ملف PDF</span>
+                        <span>إرسال / حفظ PDF</span>
                     </button>
                 </div>
                 <div class="flex items-center gap-2">
-                    <button onclick="sendCurrentInvoiceWhatsApp()" class="flex-grow py-2.5 px-4 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-lg transition-all">
-                        <i class="fa-brands fa-whatsapp text-sm"></i>
-                        <span>إرسال عبر واتساب</span>
+                    <button onclick="printInvoiceAsPDF()" class="flex-grow py-2.5 px-3 bg-carbon-700 hover:bg-carbon-600 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 border border-white/10 transition-all">
+                        <i class="fa-solid fa-print text-amber-400"></i>
+                        <span>طباعة مباشرة (A4 / AirPrint)</span>
                     </button>
                     <button onclick="copyCurrentInvoiceText()" class="py-2.5 px-3.5 bg-carbon-700 hover:bg-carbon-600 text-gray-200 font-bold rounded-xl text-xs flex items-center gap-1.5" title="نسخ نص الفاتورة">
                         <i class="fa-regular fa-copy"></i>
@@ -747,7 +755,7 @@
     </div>
 
 
-    <!-- ==================== ADD / EDIT PRODUCT MODAL (NO INSTAGRAM FIELDS) ==================== -->
+    <!-- ==================== ADD / EDIT PRODUCT MODAL ==================== -->
     <div id="productModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
         <div class="bg-carbon-800 border border-white/15 rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl">
             <div class="px-6 py-4 bg-carbon-900 border-b border-white/10 flex items-center justify-between">
@@ -860,17 +868,15 @@
         </div>
     </div>
 
-    <!-- ==================== DEDICATED A4 / RECEIPT PRINT SHEET (FOR ZERO-FREEZE PDF) ==================== -->
+    <!-- ==================== DEDICATED A4 PRINT SHEET ==================== -->
     <div id="dedicatedPrintSheet" dir="rtl"></div>
 
 
     <!-- ==================== APPLICATION JAVASCRIPT ==================== -->
     <script>
-        // Storage Keys (v6 migrates old items cleanly to pure product categories)
         const STORAGE_KEY_PRODUCTS = 'rpm_om_luxury_products_v6';
         const STORAGE_KEY_INVOICES = 'rpm_om_luxury_invoices_v6';
 
-        // Official Product Categories with Icons & Theme Colors
         const PRODUCT_CATEGORIES = [
             { id: 'all', name: 'جميع الأصناف', icon: 'fa-border-all', badgeClass: 'bg-amber-500/15 text-amber-400 border-amber-500/30' },
             { id: 'أجهزة فحص وبرمجة', name: 'أجهزة فحص وبرمجة', icon: 'fa-microchip', badgeClass: 'bg-blue-500/15 text-blue-400 border-blue-500/30' },
@@ -881,7 +887,6 @@
             { id: 'مجسمات وهدايا', name: 'مجسمات وهدايا', icon: 'fa-car-side', badgeClass: 'bg-amber-500/15 text-amber-400 border-amber-500/30' }
         ];
 
-        // 15 Authentic RPM Store Products Categorized Strictly by Product Type
         const defaultRpmCatalog = [
             {
                 id: 'rpm-01',
@@ -1065,7 +1070,6 @@
             }
         ];
 
-        // Sample Completed Order
         const sampleInitialInvoices = [
             {
                 id: 'INV-8421',
@@ -1087,7 +1091,6 @@
             }
         ];
 
-        // Application State
         let products = [];
         let invoices = [];
         let cart = [];
@@ -1110,7 +1113,6 @@
             return PRODUCT_CATEGORIES.find(c => c.id === catName) || PRODUCT_CATEGORIES[0];
         }
 
-        // Initialize App & Migrate Previous Storage if present
         function initApp() {
             const savedProd = localStorage.getItem(STORAGE_KEY_PRODUCTS) || localStorage.getItem('rpm_om_luxury_products_v5');
             if (savedProd) {
@@ -1307,7 +1309,6 @@
                 return `
                 <div class="glass-card product-card rounded-2xl p-4 flex flex-col justify-between relative overflow-hidden ${inCartQty > 0 ? 'ring-2 ring-amber-500/80' : ''}">
                     <div>
-                        <!-- Top Category & Stock Row -->
                         <div class="flex items-center justify-between gap-2 mb-3">
                             <span class="text-[11px] font-bold px-2.5 py-1 rounded-lg border ${catMeta.badgeClass} flex items-center gap-1.5 truncate">
                                 <i class="fa-solid ${catMeta.icon} text-[10px]"></i>
@@ -1318,7 +1319,6 @@
                             </span>
                         </div>
 
-                        <!-- Product Icon & Title -->
                         <div class="flex items-start gap-3 mb-2.5">
                             <div class="w-12 h-12 rounded-2xl bg-carbon-900 border border-white/10 text-amber-400 flex items-center justify-center text-xl shrink-0 shadow-inner">
                                 <i class="fa-solid ${escapeHtml(p.icon || catMeta.icon)}"></i>
@@ -1332,7 +1332,6 @@
                         <p class="text-xs text-gray-400 line-clamp-2 leading-relaxed mb-4">${escapeHtml(p.desc || '')}</p>
                     </div>
 
-                    <!-- Price & 1-Tap Add to Cart Footer -->
                     <div class="pt-3 border-t border-white/10 flex items-center justify-between gap-2">
                         <div>
                             <span class="text-[10px] text-gray-400 block">سعر البيع</span>
@@ -1543,11 +1542,13 @@
                                 <i class="fa-solid fa-eye text-amber-400"></i>
                                 <span>معاينة</span>
                             </button>
-                            <button onclick="quickPrintInvoiceById('${inv.id}')" class="w-9 h-9 bg-red-500/15 hover:bg-red-600 text-red-400 hover:text-white rounded-xl flex items-center justify-center text-sm border border-red-500/30 transition-all" title="طباعة / حفظ PDF">
+                            <button onclick="quickSharePDFById('${inv.id}')" class="px-2.5 py-2 bg-red-500/15 hover:bg-red-600 text-red-400 hover:text-white rounded-xl flex items-center gap-1 text-xs font-bold border border-red-500/30 transition-all" title="إرسال أو حفظ PDF">
                                 <i class="fa-solid fa-file-pdf"></i>
+                                <span>PDF</span>
                             </button>
-                            <button onclick="resendInvoiceWhatsApp('${inv.id}')" class="w-9 h-9 bg-emerald-600/20 hover:bg-emerald-600 text-emerald-400 hover:text-white rounded-xl flex items-center justify-center text-sm border border-emerald-500/30 transition-all" title="إرسال عبر واتساب">
+                            <button onclick="resendInvoiceWhatsApp('${inv.id}')" class="px-2.5 py-2 bg-emerald-600/20 hover:bg-emerald-600 text-emerald-400 hover:text-white rounded-xl flex items-center gap-1 text-xs font-bold border border-emerald-500/30 transition-all" title="إرسال نصي عبر واتساب">
                                 <i class="fa-brands fa-whatsapp"></i>
+                                <span>نصي</span>
                             </button>
                         </div>
                     </div>
@@ -1677,7 +1678,8 @@
             document.getElementById('checkoutGrandTotal').innerText = `${formatOMR(grandTotal)} ر.ع`;
         }
 
-        function processCheckout(sendWhatsAppAutomatically) {
+        // Checkout Mode: 'whatsapp_text' | 'whatsapp_pdf' | 'preview_only'
+        function processCheckout(mode = 'preview_only') {
             if (cart.length === 0) {
                 showToast('أضف صنفاً واحداً على الأقل لإصدار الفاتورة', 'error');
                 return;
@@ -1700,11 +1702,16 @@
                 }
             });
 
+            // Use western numerals for date/time so PDF renders cleanly on all devices
+            const now = new Date();
+            const dateStr = `${now.getFullYear()}/${String(now.getMonth() + 1).padStart(2, '0')}/${String(now.getDate()).padStart(2, '0')}`;
+            const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true }).replace('AM', 'ص').replace('PM', 'م');
+
             const newInvoice = {
                 id: 'INV-' + Math.floor(1000 + Math.random() * 9000),
                 timestamp: Date.now(),
-                dateFormatted: new Date().toLocaleDateString('ar-OM') + ' - ' + new Date().toLocaleTimeString('ar-OM', { hour: '2-digit', minute: '2-digit' }),
-                dateKey: new Date().toISOString().slice(0, 10),
+                dateFormatted: `${dateStr} - ${timeStr}`,
+                dateKey: now.toISOString().slice(0, 10),
                 customerName,
                 customerPhone,
                 governorate,
@@ -1727,68 +1734,76 @@
             refreshAllViews();
 
             openInvoicePreview(newInvoice.id);
-            showToast('تم خصم المخزون وإصدار الفاتورة بنجاح!');
+            showToast('تم اعتماد الطلب وخصم المخزون بنجاح!');
 
-            if (sendWhatsAppAutomatically) {
+            if (mode === 'whatsapp_text') {
                 sendCurrentInvoiceWhatsApp();
+            } else if (mode === 'whatsapp_pdf') {
+                setTimeout(() => {
+                    shareOrDownloadInvoicePDF();
+                }, 150);
             }
         }
 
 
-        // ==================== PROFESSIONAL PDF & PRINT ENGINE ====================
+        // ==================== FLAWLESS RTL PDF & NATIVE SHARE ENGINE ====================
         function buildPrintableInvoiceHTML(inv) {
             const rowsHtml = inv.items.map((item, idx) => `
                 <tr style="border-bottom: 1px solid #E5E7EB;">
-                    <td style="padding: 10px 8px; text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #6B7280;">${idx + 1}</td>
-                    <td style="padding: 10px 8px; font-weight: 700; font-size: 13px; color: #111827;">
-                        ${escapeHtml(item.name)}
-                        ${item.sku ? `<div style="font-size: 10px; color: #6B7280; font-family: 'JetBrains Mono', monospace;">${escapeHtml(item.sku)}</div>` : ''}
+                    <td style="padding: 12px 10px; text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #6B7280;">${idx + 1}</td>
+                    <td style="padding: 12px 10px; text-align: right; font-weight: 700; font-size: 14px; color: #111827;">
+                        <div>${escapeHtml(item.name)}</div>
+                        ${item.sku ? `<div style="font-size: 11px; color: #6B7280; font-family: 'JetBrains Mono', monospace; margin-top: 2px;">${escapeHtml(item.sku)}</div>` : ''}
                     </td>
-                    <td style="padding: 10px 8px; text-align: center; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 13px; color: #111827;">${item.qty}</td>
-                    <td style="padding: 10px 8px; text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #374151;">${formatOMR(item.price)}</td>
-                    <td style="padding: 10px 8px; text-align: left; font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 13px; color: #111827;">${formatOMR(item.price * item.qty)} ر.ع</td>
+                    <td style="padding: 12px 10px; text-align: center; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 14px; color: #111827;">${item.qty}</td>
+                    <td style="padding: 12px 10px; text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #374151;" dir="ltr">${formatOMR(item.price)}</td>
+                    <td style="padding: 12px 10px; text-align: left; font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 14px; color: #111827;" dir="ltr">${formatOMR(item.price * item.qty)} OMR</td>
                 </tr>
             `).join('');
 
             return `
-                <div style="font-family: 'Tajawal', sans-serif; color: #111827; background: #FFFFFF; max-width: 760px; margin: 0 auto; padding: 28px; border: 1px solid #E5E7EB; border-radius: 16px;">
+                <div dir="rtl" style="font-family: 'Tajawal', sans-serif; direction: rtl; text-align: right; color: #111827; background: #FFFFFF; width: 100%; max-width: 720px; margin: 0 auto; padding: 32px; border: 1px solid #E5E7EB; border-radius: 16px; box-sizing: border-box;">
                     <!-- Header -->
-                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #111827; padding-bottom: 18px; margin-bottom: 20px;">
-                        <div>
-                            <div style="display: inline-block; background: #111827; color: #F59E0B; font-weight: 900; padding: 4px 12px; border-radius: 8px; font-size: 13px; letter-spacing: 1px; margin-bottom: 6px;">RPM STORE</div>
-                            <h1 style="margin: 0; font-size: 22px; font-weight: 900; color: #111827;">متجر ار بي ام لإكسسوارات وأجهزة السيارات</h1>
-                            <p style="margin: 4px 0 0 0; font-size: 12px; color: #4B5563;">سلطنة عُمان 🇴🇲 • فاتورة مبيعات رسمية</p>
-                        </div>
-                        <div style="text-align: left;">
-                            <div style="font-size: 11px; color: #6B7280; font-weight: 700;">رقم الفاتورة</div>
-                            <div style="font-family: 'JetBrains Mono', monospace; font-size: 18px; font-weight: 900; color: #D97706;">#${escapeHtml(inv.id)}</div>
-                            <div style="font-size: 11px; color: #4B5563; margin-top: 4px;">${escapeHtml(inv.dateFormatted)}</div>
-                        </div>
-                    </div>
+                    <table style="width: 100%; border-bottom: 2px solid #111827; padding-bottom: 16px; margin-bottom: 20px;">
+                        <tr>
+                            <td style="text-align: right; vertical-align: top;">
+                                <div style="display: inline-block; background: #111827; color: #F59E0B; font-weight: 900; padding: 4px 12px; border-radius: 8px; font-size: 13px; margin-bottom: 6px; font-family: 'JetBrains Mono', monospace;">RPM STORE</div>
+                                <div style="font-size: 20px; font-weight: 900; color: #111827;">متجر ار بي ام لإكسسوارات وأجهزة السيارات</div>
+                                <div style="font-size: 12px; color: #4B5563; margin-top: 4px;">سلطنة عُمان • فاتورة مبيعات إلكترونية معتمدة</div>
+                            </td>
+                            <td style="text-align: left; vertical-align: top;">
+                                <div style="font-size: 11px; color: #6B7280; font-weight: 700;">رقم الفاتورة</div>
+                                <div style="font-family: 'JetBrains Mono', monospace; font-size: 18px; font-weight: 900; color: #D97706;" dir="ltr">#${escapeHtml(inv.id)}</div>
+                                <div style="font-size: 12px; color: #4B5563; margin-top: 4px;" dir="ltr">${escapeHtml(inv.dateFormatted)}</div>
+                            </td>
+                        </tr>
+                    </table>
 
                     <!-- Customer Info Box -->
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 12px; padding: 14px 16px; margin-bottom: 20px; font-size: 13px;">
-                        <div>
-                            <div style="color: #6B7280; font-size: 11px;">بيانات العميل:</div>
-                            <div style="font-weight: 800; color: #111827; margin-top: 2px;">${escapeHtml(inv.customerName)}</div>
-                            ${inv.customerPhone ? `<div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #374151;">هاتف: ${escapeHtml(inv.customerPhone)}</div>` : ''}
-                        </div>
-                        <div style="text-align: left;">
-                            <div style="color: #6B7280; font-size: 11px;">منطقة التوصيل والدفع:</div>
-                            <div style="font-weight: 800; color: #111827; margin-top: 2px;">${escapeHtml(inv.governorate)}</div>
-                            <div style="font-size: 12px; color: #374151;">الدفع: ${escapeHtml(inv.paymentMethod || 'تحويل بنكي')}</div>
-                        </div>
-                    </div>
+                    <table style="width: 100%; background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 12px; padding: 14px; margin-bottom: 22px;">
+                        <tr>
+                            <td style="padding: 12px 16px; text-align: right; width: 50%; vertical-align: top;">
+                                <div style="color: #6B7280; font-size: 11px; font-weight: 700;">بيانات العميل:</div>
+                                <div style="font-weight: 800; font-size: 14px; color: #111827; margin-top: 4px;">${escapeHtml(inv.customerName)}</div>
+                                ${inv.customerPhone ? `<div style="font-size: 12px; color: #374151; margin-top: 2px;">رقم الهاتف: <span style="font-family: 'JetBrains Mono', monospace; font-weight: 700;" dir="ltr">${escapeHtml(inv.customerPhone)}</span></div>` : ''}
+                            </td>
+                            <td style="padding: 12px 16px; text-align: left; width: 50%; vertical-align: top;">
+                                <div style="color: #6B7280; font-size: 11px; font-weight: 700;">التوصيل وطريقة الدفع:</div>
+                                <div style="font-weight: 800; font-size: 14px; color: #111827; margin-top: 4px;">${escapeHtml(inv.governorate)}</div>
+                                <div style="font-size: 12px; color: #374151; margin-top: 2px;">${escapeHtml(inv.paymentMethod || 'تحويل بنكي')}</div>
+                            </td>
+                        </tr>
+                    </table>
 
                     <!-- Items Table -->
-                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 22px;">
+                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 24px;">
                         <thead>
                             <tr style="background: #111827; color: #FFFFFF; font-size: 12px;">
-                                <th style="padding: 10px 8px; text-align: center; border-top-right-radius: 8px;">#</th>
-                                <th style="padding: 10px 8px; text-align: right;">البيان / الصنف</th>
-                                <th style="padding: 10px 8px; text-align: center;">الكمية</th>
-                                <th style="padding: 10px 8px; text-align: center;">سعر الوحدة</th>
-                                <th style="padding: 10px 8px; text-align: left; border-top-left-radius: 8px;">الإجمالي</th>
+                                <th style="padding: 10px; text-align: center; width: 8%;">#</th>
+                                <th style="padding: 10px; text-align: right; width: 46%;">البيان / الصنف</th>
+                                <th style="padding: 10px; text-align: center; width: 12%;">الكمية</th>
+                                <th style="padding: 10px; text-align: center; width: 16%;">سعر الوحدة</th>
+                                <th style="padding: 10px; text-align: left; width: 18%;">الإجمالي</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -1797,26 +1812,31 @@
                     </table>
 
                     <!-- Summary Totals -->
-                    <div style="display: flex; justify-content: flex-end;">
-                        <div style="width: 280px; background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 12px; padding: 14px 16px; font-size: 13px;">
-                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px; color: #4B5563;">
-                                <span>مجموع الأصناف:</span>
-                                <strong style="font-family: 'JetBrains Mono', monospace; color: #111827;">${formatOMR(inv.subtotal)} ر.ع</strong>
-                            </div>
-                            <div style="display: flex; justify-content: space-between; margin-bottom: 10px; color: #4B5563;">
-                                <span>رسوم التوصيل:</span>
-                                <strong style="font-family: 'JetBrains Mono', monospace; color: #111827;">${formatOMR(inv.deliveryFee)} ر.ع</strong>
-                            </div>
-                            <div style="display: flex; justify-content: space-between; border-top: 2px solid #111827; padding-top: 10px; font-size: 15px; font-weight: 900; color: #111827;">
-                                <span>الإجمالي النهائي:</span>
-                                <span style="font-family: 'JetBrains Mono', monospace; color: #D97706;">${formatOMR(inv.total)} ر.ع</span>
-                            </div>
-                        </div>
-                    </div>
+                    <table style="width: 100%; margin-bottom: 24px;">
+                        <tr>
+                            <td style="width: 45%;"></td>
+                            <td style="width: 55%; background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 12px; padding: 16px;">
+                                <table style="width: 100%; font-size: 13px;">
+                                    <tr>
+                                        <td style="padding: 4px 0; color: #4B5563; text-align: right;">مجموع الأصناف:</td>
+                                        <td style="padding: 4px 0; font-family: 'JetBrains Mono', monospace; font-weight: 700; color: #111827; text-align: left;" dir="ltr">${formatOMR(inv.subtotal)} ر.ع</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 4px 0 10px 0; color: #4B5563; text-align: right;">رسوم التوصيل:</td>
+                                        <td style="padding: 4px 0 10px 0; font-family: 'JetBrains Mono', monospace; font-weight: 700; color: #111827; text-align: left;" dir="ltr">${formatOMR(inv.deliveryFee)} ر.ع</td>
+                                    </tr>
+                                    <tr style="border-top: 2px solid #111827;">
+                                        <td style="padding-top: 10px; font-size: 15px; font-weight: 900; color: #111827; text-align: right;">الإجمالي النهائي:</td>
+                                        <td style="padding-top: 10px; font-size: 16px; font-weight: 900; font-family: 'JetBrains Mono', monospace; color: #D97706; text-align: left;" dir="ltr">${formatOMR(inv.total)} ر.ع</td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
 
                     <!-- Footer -->
-                    <div style="text-align: center; border-top: 1px dashed #D1D5DB; margin-top: 26px; padding-top: 14px; font-size: 12px; color: #6B7280;">
-                        شكراً لتسوقكم من متجر ار بي ام (RPM STORE) • نتمنى لكم قيادة آمنة وممتعة 🚗✨
+                    <div style="text-align: center; border-top: 1px dashed #D1D5DB; padding-top: 16px; font-size: 12px; color: #6B7280; font-weight: 700;">
+                        شكراً لتسوقكم من متجر ار بي ام (RPM STORE) • سلطنة عُمان
                     </div>
                 </div>
             `;
@@ -1846,7 +1866,6 @@
                 </div>
             `).join('');
 
-            // Populate Dedicated Print Sheet immediately
             document.getElementById('dedicatedPrintSheet').innerHTML = buildPrintableInvoiceHTML(inv);
 
             const modal = document.getElementById('invoiceModal');
@@ -1860,7 +1879,7 @@
             modal.classList.add('hidden');
         }
 
-        // Native Zero-Freeze Print / Save as PDF (Ideal for iOS Safari & Desktop)
+        // Option 1: Native Browser Print / iOS AirPrint Save to PDF
         function printInvoiceAsPDF() {
             if (!currentPreviewInvoice) return;
             document.getElementById('dedicatedPrintSheet').innerHTML = buildPrintableInvoiceHTML(currentPreviewInvoice);
@@ -1869,56 +1888,98 @@
             }, 60);
         }
 
-        function quickPrintInvoiceById(invId) {
-            const inv = invoices.find(i => i.id === invId);
-            if (!inv) return;
-            currentPreviewInvoice = inv;
-            document.getElementById('dedicatedPrintSheet').innerHTML = buildPrintableInvoiceHTML(inv);
-            setTimeout(() => {
-                window.print();
-            }, 60);
-        }
-
-        // Direct PDF File Download via html2pdf.js
-        function downloadInvoicePDFFile() {
+        // Option 2: Uncropped Full-Height PDF Generator + Native iOS WhatsApp File Share
+        async function shareOrDownloadInvoicePDF() {
             if (!currentPreviewInvoice) return;
-            if (typeof html2pdf === 'undefined') {
-                printInvoiceAsPDF();
-                return;
+            const inv = currentPreviewInvoice;
+            const btn = document.getElementById('btnShareOrDownloadPDF');
+            const origHtml = btn ? btn.innerHTML : '';
+
+            if (btn) {
+                btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>جاري تجهيز PDF...</span>`;
+                btn.disabled = true;
             }
 
-            const btn = document.getElementById('btnDownloadDirectPDF');
-            const origHtml = btn.innerHTML;
-            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>جاري تجهيز PDF...</span>`;
-            btn.disabled = true;
+            // Create an uncropped offscreen render container
+            const renderBox = document.createElement('div');
+            renderBox.style.position = 'fixed';
+            renderBox.style.top = '0';
+            renderBox.style.left = '-9999px';
+            renderBox.style.width = '760px';
+            renderBox.style.background = '#FFFFFF';
+            renderBox.style.padding = '20px';
+            renderBox.style.zIndex = '-1';
+            renderBox.innerHTML = buildPrintableInvoiceHTML(inv);
+            document.body.appendChild(renderBox);
 
-            const tempWrapper = document.createElement('div');
-            tempWrapper.dir = 'rtl';
-            tempWrapper.style.width = '760px';
-            tempWrapper.style.padding = '16px';
-            tempWrapper.style.background = '#FFFFFF';
-            tempWrapper.innerHTML = buildPrintableInvoiceHTML(currentPreviewInvoice);
-            document.body.appendChild(tempWrapper);
+            try {
+                // Wait briefly for fonts & layout to settle
+                await new Promise(r => setTimeout(r, 150));
 
-            const opt = {
-                margin: 8,
-                filename: `RPM-${currentPreviewInvoice.id}.pdf`,
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true, logging: false },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-            };
+                const targetEl = renderBox.firstElementChild;
+                const fullWidth = targetEl.offsetWidth || 720;
+                const fullHeight = targetEl.offsetHeight || 900;
 
-            html2pdf().set(opt).from(tempWrapper).save().then(() => {
-                document.body.removeChild(tempWrapper);
-                btn.innerHTML = origHtml;
-                btn.disabled = false;
-                showToast('تم تنزيل ملف الفاتورة PDF بنجاح');
-            }).catch(() => {
-                if (document.body.contains(tempWrapper)) document.body.removeChild(tempWrapper);
-                btn.innerHTML = origHtml;
-                btn.disabled = false;
-                printInvoiceAsPDF();
-            });
+                // htmlToImage uses SVG foreignObject, preserving Safari's native Arabic shaping without cropping
+                const dataUrl = await htmlToImage.toPng(targetEl, {
+                    quality: 1.0,
+                    pixelRatio: 2,
+                    backgroundColor: '#FFFFFF',
+                    width: fullWidth,
+                    height: fullHeight
+                });
+
+                const { jsPDF } = window.jspdf;
+                const pdfWidthMm = 210;
+                const pdfHeightMm = Math.max(148, (fullHeight * pdfWidthMm) / fullWidth);
+
+                const pdf = new jsPDF({
+                    orientation: 'p',
+                    unit: 'mm',
+                    format: [pdfWidthMm, pdfHeightMm]
+                });
+
+                pdf.addImage(dataUrl, 'PNG', 0, 0, pdfWidthMm, pdfHeightMm);
+
+                const fileName = `RPM-${inv.id}.pdf`;
+                const pdfBlob = pdf.output('blob');
+                const pdfFile = new File([pdfBlob], fileName, { type: 'application/pdf' });
+
+                // If on iPhone / Mobile supporting Web Share API for files -> Opens WhatsApp share sheet directly!
+                if (navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
+                    await navigator.share({
+                        files: [pdfFile],
+                        title: `فاتورة متجر RPM رقم #${inv.id}`,
+                        text: `فاتورة طلبك من متجر ار بي ام | RPM STORE (#${inv.id})`
+                    });
+                    showToast('تم فتح قائمة مشاركة ملف الـ PDF');
+                } else {
+                    pdf.save(fileName);
+                    showToast('تم حفظ ملف الفاتورة PDF بنجاح');
+                }
+            } catch (err) {
+                // User cancelled share or fallback needed
+                if (err && err.name !== 'AbortError') {
+                    printInvoiceAsPDF();
+                }
+            } finally {
+                if (document.body.contains(renderBox)) {
+                    document.body.removeChild(renderBox);
+                }
+                if (btn) {
+                    btn.innerHTML = origHtml;
+                    btn.disabled = false;
+                }
+            }
+        }
+
+        function quickSharePDFById(invId) {
+            const inv = invoices.find(i => i.id === invId);
+            if (!inv) return;
+            openInvoicePreview(invId);
+            setTimeout(() => {
+                shareOrDownloadInvoicePDF();
+            }, 150);
         }
 
         function buildInvoiceWhatsAppText(inv) {
@@ -1926,6 +1987,7 @@
             return `مرحباً بك من *متجر ار بي ام | RPM STORE* 🚗✨\n` +
                 `━━━━━━━━━━━━━━━\n` +
                 `📄 *فاتورة طلب رقم:* #${inv.id}\n` +
+                `📅 *التاريخ:* ${inv.dateFormatted}\n` +
                 `👤 *العميل:* ${inv.customerName}\n` +
                 `📍 *التوصيل:* ${inv.governorate}\n` +
                 `💳 *طريقة الدفع:* ${inv.paymentMethod || 'تحويل بنكي'}\n` +
